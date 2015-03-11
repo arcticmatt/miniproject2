@@ -104,33 +104,33 @@ class SGD:
 
         i, j = point
         N = float(len(self.training_points))
-        U_rows = len(self.U)
-        V_cols = len(self.V[0])
-        U_grads = [0] * U_rows
-        V_grads = [0] * V_cols
 
-        # Loop through all rows in U and take the gradient of the target
-        # function with respect to each one
-        for k in range(0, U_rows):
-            if k == i:
-                U_grads[k] = self.learning_rate * ((self.regularizer / N) * self.U[i,:] \
-                        - self.V[:,j] * (self.Y[i][j] - np.multiply(self.U[i,:], self.V[:,j])))
-            else:
-                U_grads[k] = self.learning_rate * ((self.regularizer / N) * self.U[k,:])
+        # Calculuate the gradients for the U matrix. Do this by pulling out
+        # the i'th row, calculating the gradient for the matrix sans that row (just
+        # one multiplication), and then calculating the gradient for the i'th row
+        # separately and putting the results together.
+        U_i_row = self.U[i]
+        U_other_rows = np.vstack((self.U[:i], self.U[i + 1:]))
+        U_grads = self.learning_rate * (self.regularizer / N) * U_other_rows
+        U_grads_i = self.learning_rate * ((self.regularizer / N) * U_i_row \
+                        - self.V[:,j] * (self.Y[i][j] - np.multiply(U_i_row, self.V[:,j])))
+        U_grads = np.insert(U_grads, i, U_grads_i, 0)
 
-        # Loop through all columns in V and take the gradient of the target
-        # function with respect to each one
-        for k in range(0, V_cols):
-            if k == i:
-                V_grads[k] = self.learning_rate * ((self.regularizer / N) * self.V[:,j] \
-                        - self.U[i,:] * (self.Y[i][j] - np.multiply(self.U[i,:], self.V[:,j])))
-            else:
-                V_grads[k] = self.learning_rate * ((self.regularizer / N) * self.V[:,k])
-
-        # Turn gradient matrices into nparrays so we can subtract them easily from U and V
-        U_grads = np.array(U_grads)
-        V_grads = np.array(V_grads)
-        V_grads = np.transpose(V_grads)
+        # Transpose V to make it easier to work with (so we can work with rows
+        # instead of columns).
+        # Calculuate the gradients for the V matrix. Do this by pulling out
+        # the j'th row, calculating the gradient for the matrix sans that row (just
+        # one multiplication), and then calculating the gradient for the j'th row
+        # separately and putting the results together. Then tranpose the results
+        # to make the dimensions consistent with V.
+        Vt = np.transpose(self.V)
+        Vt_j_row = Vt[j]
+        Vt_other_rows = np.vstack((Vt[:j], Vt[j + 1:]))
+        Vt_grads = self.learning_rate * (self.regularizer / N) * Vt_other_rows
+        Vt_grads_j = self.learning_rate * ((self.regularizer / N) * Vt_j_row \
+                        - self.U[i,:] * (self.Y[i][j] - np.multiply(self.U[i,:], Vt_j_row)))
+        Vt_grads = np.insert(Vt_grads, j, Vt_grads_j, 0)
+        V_grads = np.transpose(Vt_grads)
 
         # Perform shifts
         self.U = np.subtract(self.U, U_grads)
