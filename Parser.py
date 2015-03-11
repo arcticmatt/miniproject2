@@ -26,6 +26,10 @@ class Parser:
     def parse_ratings_data(self, filename):
         '''Parses the ratings data, which consists of:
         a user id, a movie id, a rating
+
+        Returns a tuple consisting of the resulting Y matrix and
+        a list of training_points that tell us which indices of the Y matrix
+        contain actual data
         '''
 
         print 'Parsing ratings data'
@@ -33,7 +37,11 @@ class Parser:
         movie_ids = []
         ratings = []
 
-        # Get a handle for the specified file
+        # Tuples of the form (user_id, movie_id). Used to index indices of the
+        # Y matrix that actually hold data.
+        training_points = []
+
+        # Get a handle for the specified file.
         data = open(filename)
         for line in data:
             line = line.rstrip()
@@ -46,12 +54,13 @@ class Parser:
         num_columns = max(movie_ids)
         Y = [[0 for i in range(num_columns)] for i in range(num_rows)]
         for i in range(0, len(user_ids)):
-            user_id = user_ids[i] - 1 # decrement by 1 because matrix is 0 indexed
-            movie_id = movie_ids[i] - 1 # decrement by 1 because matrix is 0 indexed
+            user_id = user_ids[i] - 1 # Decrement by 1 because matrix is 0 indexed.
+            movie_id = movie_ids[i] - 1 # Decrement by 1 because matrix is 0 indexed.
+            training_points.append((user_id, movie_id))
             rating = ratings[i]
             Y[user_id][movie_id] = rating
 
-        return Y
+        return Y, training_points
 
 
 if __name__ == '__main__':
