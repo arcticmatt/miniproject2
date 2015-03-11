@@ -52,9 +52,9 @@ class SGD:
         '''
 
         print 'Running SGD'
-        num_epochs = 1
+        epochs = 1
         while (True):
-            print 'Epoch', num_epochs
+            print 'Epoch', epochs
 
             # Keep track of old matrices to see how much this epoch changes them
             U_old = copy.copy(self.U)
@@ -90,6 +90,10 @@ class SGD:
             self.learning_rate /= float(epochs)
 
         print 'Done running SGD'
+
+        # Done with SGD; get error
+        error = self.get_error()
+        print 'Error =', error
 
     def sgd_step(self, point):
         '''
@@ -129,6 +133,19 @@ class SGD:
         # Perform shifts
         self.U = np.subtract(self.U, U_grads)
         self.V = np.subtract(self.V, V_grads)
+
+    def get_error(self):
+        '''
+        This method is called once we are done with SGD and returns the
+        squared error between Y and UV.
+        '''
+
+        # Get squared differences between Y and UV
+        error_mat = np.subtract(self.Y, np.dot(self.U, self.V))
+        error_mat = np.square(error_mat)
+        # Add all the differences
+        sum_errors = error_mat.sum()
+        return sum_errors
 
 if __name__ == '__main__':
     sgd = SGD()
