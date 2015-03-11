@@ -35,16 +35,15 @@ class Parser:
 
         # Get a handle for the specified file
         data = open(filename)
-
-
         for line in data:
             print line
             arr = line.split()
             user_ids.append(arr[0])
             movie_ids.append(arr[1])
             ratings.append(arr[2])
-
         print user_ids
+
+        return user_ids, movie_ids, ratings
 
 if __name__ == '__main__':
     parser = Parser()
