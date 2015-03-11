@@ -36,7 +36,6 @@ class Parser:
         # Get a handle for the specified file
         data = open(filename)
         
-
         for line in data:
             print line
             arr = line.split()
@@ -44,7 +43,8 @@ class Parser:
             movie_ids.append(arr[1])
             ratings.append(arr[2])
         
-        print user_ids
+        return user_ids, movie_ids, ratings
         
-
+obj = Parser()
+obj.parse_ratings_data("data/data.txt")
    
