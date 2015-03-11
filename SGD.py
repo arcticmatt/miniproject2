@@ -64,7 +64,8 @@ class SGD:
             random.shuffle(self.training_points)
             count = 1
             for point in self.training_points:
-                #print 'point #', count
+                if count % 50 == 0:
+                    print 'point #', count
                 self.sgd_step(point)
                 count += 1
 
@@ -102,6 +103,7 @@ class SGD:
         '''
 
         i, j = point
+        N = float(len(self.training_points))
         U_rows = len(self.U)
         V_cols = len(self.V[0])
         U_grads = [0] * U_rows
@@ -111,19 +113,19 @@ class SGD:
         # function with respect to each one
         for k in range(0, U_rows):
             if k == i:
-                U_grads[k] = self.learning_rate * ((self.regularizer / float(len(self.training_points))) * self.U[i,:] \
+                U_grads[k] = self.learning_rate * ((self.regularizer / N) * self.U[i,:] \
                         - self.V[:,j] * (self.Y[i][j] - np.multiply(self.U[i,:], self.V[:,j])))
             else:
-                U_grads[k] = self.learning_rate * ((self.regularizer / float(len(self.training_points))) * self.U[k,:])
+                U_grads[k] = self.learning_rate * ((self.regularizer / N) * self.U[k,:])
 
         # Loop through all columns in V and take the gradient of the target
         # function with respect to each one
         for k in range(0, V_cols):
             if k == i:
-                V_grads[k] = self.learning_rate * ((self.regularizer / float(len(self.training_points))) * self.V[:,j] \
+                V_grads[k] = self.learning_rate * ((self.regularizer / N) * self.V[:,j] \
                         - self.U[i,:] * (self.Y[i][j] - np.multiply(self.U[i,:], self.V[:,j])))
             else:
-                V_grads[k] = self.learning_rate * ((self.regularizer / float(len(self.training_points))) * self.V[:,k])
+                V_grads[k] = self.learning_rate * ((self.regularizer / N) * self.V[:,k])
 
         # Turn gradient matrices into nparrays so we can subtract them easily from U and V
         U_grads = np.array(U_grads)
