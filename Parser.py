@@ -10,18 +10,18 @@ class Parser:
         pass
 
     def parse_movie_data(self, filename):
-        
+
         print 'Parsing movie data'
         x = []
         y = []
 
         # Get a handle for the specified file
         movies = open(filename)
-        
+
         for line in movies:
             for word in line.split(" "):
                 x.append(word)
-        
+
         print x
 
 
@@ -35,7 +35,7 @@ class Parser:
 
         # Get a handle for the specified file
         data = open(filename)
-        
+
 
         for line in data:
             print line
@@ -43,8 +43,9 @@ class Parser:
             user_ids.append(arr[0])
             movie_ids.append(arr[1])
             ratings.append(arr[2])
-        
-        print user_ids
-        
 
-   
+        print user_ids
+
+if __name__ == '__main__':
+    parser = Parser()
+    parser.parse_movie_data('data/data.txt')
