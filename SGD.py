@@ -13,7 +13,8 @@ class SGD:
         # The number of latent factors. We will use 20 b/c Yisong Yue told us to.
         self.k = 20
         self.regularizer = 10
-        self.learning_rate = .00001
+        self.learning_rate = .0001
+        self.cutoff = .01
 
         # A  m x n  matrix of movie ratings, where y_ij corresponds to user (i+1)'s
         # rating for movie (j+1) (the plus-one's are because the matrix is 0-indexed)
@@ -71,11 +72,16 @@ class SGD:
             # all differences that are greater than .01
             U_diff = np.subtract(self.U, U_old)
             V_diff = np.subtract(self.V, V_old)
-            U_diff = filter(lambda x : x < .01, U_diff)
-            V_diff = filter(lambda x : x < .01, V_diff)
             print 'U_diff =', U_diff
             print 'V_diff =', V_diff
-            if not U_diff and not V_diff:
+            low_diffs = []
+            for U_row in U_diff:
+                low_diffs.extend(filter(lambda x : x > self.cutoff, U_row))
+            for V_row in V_diff:
+                low_diffs.extend(filter(lambda x : x > self.cutoff, V_row))
+            print 'low_diffs =', low_diffs
+
+            if not low_diffs:
                 print 'Differences are all less than .01, so we break!'
                 break
 
