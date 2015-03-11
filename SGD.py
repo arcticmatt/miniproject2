@@ -1,5 +1,6 @@
 from Parser import Parser
 import random
+import copy
 import numpy as np
 
 class SGD:
@@ -53,10 +54,30 @@ class SGD:
         num_epochs = 1
         while (True):
             print 'Epoch', num_epochs
+
+            # Keep track of old matrices to see how much this epoch changes them
+            U_old = copy.copy(self.U)
+            V_old = copy.copy(self.V)
+
             # Before each epoch, shuffle the training points to randomize the process.
             random.shuffle(self.training_points)
+            count = 1
             for point in self.training_points:
+                #print 'point #', count
                 self.sgd_step(point)
+                count += 1
+
+            # Get differences between updated and old matrices, filter out
+            # all differences that are greater than .01
+            U_diff = np.subtract(self.U, U_old)
+            V_diff = np.subtract(self.V, V_old)
+            U_diff = filter(lambda x : x < .01, U_diff)
+            V_diff = filter(lambda x : x < .01, V_diff)
+            print 'U_diff =', U_diff
+            print 'V_diff =', V_diff
+            if not U_diff and not V_diff:
+                print 'Differences are all less than .01, so we break!'
+                break
 
             epochs += 1
             # Shrink learning rate
