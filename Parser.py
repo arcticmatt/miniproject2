@@ -1,6 +1,5 @@
 import csv
 import os
-from sklearn.decomposition import PCA
 
 class Parser:
     '''
@@ -66,4 +65,5 @@ class Parser:
 
 if __name__ == '__main__':
     parser = Parser()
-    parser.parse_ratings_data('data/data.txt')
+    data = parser.parse_ratings_data('data/data.txt')
+    print data

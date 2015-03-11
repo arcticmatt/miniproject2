@@ -1,0 +1,65 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Preamble
+\documentclass{article}
+\usepackage{amsmath,amssymb,amsthm,fullpage}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{verbatim}
+\usepackage{ dsfont }
+\graphicspath{{images/}}
+\usepackage[a4paper,bindingoffset=0in,left=.5in,right=1in,top=1in,
+bottom=1in,footskip=0in]{geometry}
+\newtheorem*{prop}{Proposition}
+%\newcounter{Examplecount}
+%\setcounter{Examplecount}{0}
+\newenvironment{discussion}{\noindent Discussion.}{}
+\setlength{\headheight}{12pt}
+\setlength{\headsep}{10pt}
+\usepackage{fancyhdr}
+
+\newcommand*{\wvec}{\ensuremath{\mathbf{w}}}
+\newcommand*{\wb}{\ensuremath{\mathbf{w}}}
+\newcommand*{\yb}{\ensuremath{\mathbf{y}}}
+\newcommand*{\Xb}{\ensuremath{\mathbf{X}}}
+\newcommand*{\Ib}{\ensuremath{\mathbf{I}}}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{CS155 MiniProject 2}
+\rhead{Kshitij Grover, Matt Lim, Siddharth Murching}
+\begin{document}
+
+\section*{Stochastic Gradient Descent, De-Mystified}
+
+Since we are implementing stochastic gradient descent, we want to
+compute the gradient of the following expression w.r.t $u_{n}, v_{m} \forall n \in U, m \in V$ for
+a given $y_{ij}$.
+
+$$ L =  \min_{U, V} \frac{\lambda}{2N} (||U||^{2}_{Fro} - ||V||^{2}_{Fro}) + \frac{1}{2} (y_{ij} - u_{i}^{\intercal}v_{j})^{2} $$
+
+We have the following process for stochastic gradient descent:
+
+\begin{enumerate}
+    \item Randomly pick a $y_{ij}$
+    \item Compute the gradient of the error function $E(i,j)$ with respect to every column
+        in $U$ and every column in $V$
+    \item Subtract $\eta \nabla$ from $U$ and $V$
+    \item Repeat steps 1-3 until $\nabla < \epsilon$.
+\end{enumerate}
+
+\noindent For every column of $U$, i.e. $\forall u_{k} \in U$, we compute
+
+$$ \frac{\partial}{\partial_{u_{k}}} (L) = \frac{\lambda}{n} u_{k} + \mathds{1}^{u_{k} = u_{i}} v_{j}(y_{ij} - u_{i}^{\intercal}v_{j}) $$
+
+\noindent Similarly, for each volumn of $V$, i.e. $\forall v_{k} \in V$, we compute
+
+$$ \frac{\partial}{\partial_{v_{k}}} (L) = \frac{\lambda}{n} v_{k} + \mathds{1}^{v_{k} = v_{j}} u_{i}(y_{ij} - u_{i}^{\intercal}v_{j}) $$
+
+\section*{Choice of Parameters}
+As per the set, we want to over-specify the rank of $U$ and $V$, so we will pick $k = 20$
+given the concrete suggestion in the problem. We will run the risk of iterating too
+many times $\eta = 0.001$.
+
+
+
+\end{document}
