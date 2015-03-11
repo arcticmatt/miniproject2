@@ -11,7 +11,8 @@ class SGD:
     def __init__(self):
         # The number of latent factors. We will use 20 b/c Yisong Yue told us to.
         self.k = 20
-        self.learning_rate = .001
+        self.regularizer = 10
+        self.learning_rate = .00001
 
         # A  m x n  matrix of movie ratings, where y_ij corresponds to user (i+1)'s
         # rating for movie (j+1) (the plus-one's are because the matrix is 0-indexed)
@@ -79,22 +80,21 @@ class SGD:
         # function with respect to each one
         for k in range(0, U_rows):
             if k == i:
-                U_grads[k] = (self.learning_rate / float(len(self.training_points))) * self.U[i,:] \
-                        - self.V[:,j] * (self.Y[i][j] - np.multiply(self.U[i,:], self.V[:,j]))
+                U_grads[k] = self.learning_rate * ((self.regularizer / float(len(self.training_points))) * self.U[i,:] \
+                        - self.V[:,j] * (self.Y[i][j] - np.multiply(self.U[i,:], self.V[:,j])))
             else:
-                U_grads[k] = (self.learning_rate / float(len(self.training_points))) * self.U[k,:]
+                U_grads[k] = self.learning_rate * ((self.regularizer / float(len(self.training_points))) * self.U[k,:])
 
         # Loop through all columns in V and take the gradient of the target
         # function with respect to each one
         for k in range(0, V_cols):
             if k == i:
-                V_grads[k] = (self.learning_rate / float(len(self.training_points))) * self.V[:,j] \
-                        - self.U[i,:] * (self.Y[i][j] - np.multiply(self.U[i,:], self.V[:,j]))
+                V_grads[k] = self.learning_rate * ((self.regularizer / float(len(self.training_points))) * self.V[:,j] \
+                        - self.U[i,:] * (self.Y[i][j] - np.multiply(self.U[i,:], self.V[:,j])))
             else:
-                V_grads[k] = (self.learning_rate / float(len(self.training_points))) * self.V[:,k]
+                V_grads[k] = self.learning_rate * ((self.regularizer / float(len(self.training_points))) * self.V[:,k])
 
         # Turn gradient matrices into nparrays so we can subtract them easily from U and V
-        print V_grads[0][0]
         U_grads = np.array(U_grads)
         V_grads = np.array(V_grads)
         V_grads = np.transpose(V_grads)
