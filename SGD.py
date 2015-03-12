@@ -1,6 +1,7 @@
 from Parser import Parser
 import random
 import copy
+import math
 import numpy as np
 
 class SGD:
@@ -13,7 +14,7 @@ class SGD:
         # The number of latent factors. We will use 20 b/c Yisong Yue told us to.
         self.k = 20
         self.regularizer = 10
-        self.learning_rate = .0001
+        self.learning_rate = .001
         self.cutoff = .01
 
         # A  m x n  matrix of movie ratings, where y_ij corresponds to user (i+1)'s
@@ -64,8 +65,10 @@ class SGD:
             random.shuffle(self.training_points)
             count = 1
             for point in self.training_points:
-                if count % 50 == 0:
+                if count % 5000 == 0:
                     print 'point #', count
+                    #error = self.get_error()
+                    #print 'Error =', error
                 self.sgd_step(point)
                 count += 1
 
@@ -73,22 +76,22 @@ class SGD:
             # all differences that are greater than .01
             U_diff = np.subtract(self.U, U_old)
             V_diff = np.subtract(self.V, V_old)
-            print 'U_diff =', U_diff
-            print 'V_diff =', V_diff
-            low_diffs = []
+            high_diffs = []
             for U_row in U_diff:
-                low_diffs.extend(filter(lambda x : x > self.cutoff, U_row))
+                high_diffs.extend(filter(lambda x : x > self.cutoff, U_row))
             for V_row in V_diff:
-                low_diffs.extend(filter(lambda x : x > self.cutoff, V_row))
-            print 'low_diffs =', low_diffs
+                high_diffs.extend(filter(lambda x : x > self.cutoff, V_row))
 
-            if not low_diffs:
-                print 'Differences are all less than .01, so we break!'
-                break
+            #if not high_diffs:
+                #print 'Differences are all less than .01, so we break!'
+                #break
+
+            error = self.get_error()
+            print 'Error =', error
 
             epochs += 1
             # Shrink learning rate
-            self.learning_rate /= float(epochs)
+            #self.learning_rate /= float(epochs)
 
         print 'Done running SGD'
 
@@ -133,8 +136,8 @@ class SGD:
         V_grads = np.transpose(Vt_grads)
 
         # Perform shifts
-        self.U = np.subtract(self.U, U_grads)
-        self.V = np.subtract(self.V, V_grads)
+        self.U = np.add(self.U, U_grads)
+        self.V = np.add(self.V, V_grads)
 
     def get_error(self):
         '''
@@ -142,11 +145,14 @@ class SGD:
         squared error between Y and UV.
         '''
 
-        # Get squared differences between Y and UV
-        error_mat = np.subtract(self.Y, np.dot(self.U, self.V))
-        error_mat = np.square(error_mat)
-        # Add all the differences
-        sum_errors = error_mat.sum()
+        # Get squared differences between Y and UV for the indices of Y that
+        # we initially initialized
+        UV = np.dot(self.U, self.V)
+        sum_errors = 0
+        for point in self.training_points:
+            i, j = point
+            error = math.pow(self.Y[i][j] - UV[i][j], 2)
+            sum_errors += error
         return sum_errors
 
 if __name__ == '__main__':
