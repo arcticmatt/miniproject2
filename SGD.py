@@ -15,7 +15,7 @@ class SGD:
     def __init__(self):
         # The number of latent factors. We will use 20 b/c Yisong Yue told us to.
         self.k = 20
-        self.regularizer = 1.0
+        self.regularizer = 1
         self.learning_rate = .001
         self.cutoff = .0001
 
@@ -29,6 +29,9 @@ class SGD:
 
         self.load_data() # Load the Y matrix
 
+        # Average of all observations in Y
+        self.Y_avg = (sum(map(sum, self.Y))) / float(len(self.training_points))
+
         Y_rows = len(self.Y)
         Y_cols = len(self.Y[0])
 
@@ -39,6 +42,14 @@ class SGD:
         # A  k x n  matrix. Initialized with random values.
         self.V = [[random.random() for i in range(Y_cols)] for i in range(self.k)]
         self.V = np.array(self.V) # make numpy array to make matrix operations easier
+
+        # Vector of bias/offset terms, one for each user
+        self.a = [random.random() for i in range(Y_rows)]
+        self.a = np.array(self.a)
+
+        # Vector of bias/offset terms, one for each movie
+        self.b = [random.random() for i in range(Y_cols)]
+        self.b = np.array(self.b)
 
     def load_data(self):
         '''
@@ -139,8 +150,9 @@ class SGD:
         U_i_row = self.U[i]
         U_other_rows = np.vstack((self.U[:i], self.U[i + 1:]))
         U_grads = self.learning_rate * (self.regularizer / N) * U_other_rows
-        U_grads_i = self.learning_rate * ((self.regularizer / N) * U_i_row \
-                - self.V[:,j] * (self.Y[i][j] - np.dot(U_i_row, self.V[:,j])))
+        U_norm_grad_i = (self.regularizer / N) * U_i_row
+        U_other_grad_i = -self.V[:,j] * ((self.Y[i][j] - self.Y_avg) - (np.dot(U_i_row, self.V[:,j]) + self.a[i] + self.b[j]))
+        U_grads_i = self.learning_rate * (U_norm_grad_i + U_other_grad_i)
         U_grads = np.insert(U_grads, i, U_grads_i, 0)
 
         # Transpose V to make it easier to work with (so we can work with rows
@@ -154,14 +166,35 @@ class SGD:
         Vt_j_row = Vt[j]
         Vt_other_rows = np.vstack((Vt[:j], Vt[j + 1:]))
         Vt_grads = self.learning_rate * (self.regularizer / N) * Vt_other_rows
-        Vt_grads_j = self.learning_rate * ((self.regularizer / N) * Vt_j_row \
-                        - self.U[i,:] * (self.Y[i][j] - np.dot(self.U[i,:], Vt_j_row)))
+        Vt_norm_grad_j = (self.regularizer / N) * Vt_j_row
+        Vt_other_grad_j = -self.U[i,:] * ((self.Y[i][j] - self.Y_avg) - (np.dot(self.U[i,:], Vt_j_row) + self.a[i] + self.b[j]))
+        Vt_grads_j = self.learning_rate * (Vt_norm_grad_j + Vt_other_grad_j)
         Vt_grads = np.insert(Vt_grads, j, Vt_grads_j, 0)
         V_grads = np.transpose(Vt_grads)
+
+        # Calculate the gradients for the a vector
+        a_i_val = self.a[i]
+        a_other_vals = np.append(self.a[:i], self.a[i + 1:])
+        a_grads = self.learning_rate * (self.regularizer / N) * a_other_vals
+        a_norm_grad_i = (self.regularizer / N) * a_i_val
+        a_other_grad_i = -((self.Y[i][j] - self.Y_avg) - (np.dot(self.U[i,:], Vt_j_row) + self.a[i] + self.b[j]))
+        a_grads_i = self.learning_rate * (a_norm_grad_i + a_other_grad_i)
+        a_grads = np.insert(a_grads, i, a_grads_i)
+
+        # Calculate the gradients for the b vector
+        b_j_val = self.b[j]
+        b_other_vals = np.append(self.b[:j], self.b[j + 1:])
+        b_grads = self.learning_rate * (self.regularizer / N) * b_other_vals
+        b_norm_grad_j = (self.regularizer / N) * b_j_val
+        b_other_grad_j = -((self.Y[i][j] - self.Y_avg) - (np.dot(self.U[i,:], Vt_j_row) + self.a[i] + self.b[j]))
+        b_grads_j = self.learning_rate * (b_norm_grad_j + b_other_grad_j)
+        b_grads = np.insert(b_grads, j, b_grads_j)
 
         # Perform shifts
         self.U = np.subtract(self.U, U_grads)
         self.V = np.subtract(self.V, V_grads)
+        self.a = np.subtract(self.a, a_grads)
+        self.b = np.subtract(self.b, b_grads)
 
     def get_error(self):
         '''
