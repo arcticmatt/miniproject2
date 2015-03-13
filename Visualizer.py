@@ -34,27 +34,27 @@ class Visualizer:
         '''
 
         return {
-            "Batman Forever" : 29,
-            "Bad Boys" : 27,
-            "Free Willy" : 78,
-            "My Fair Lady" : 485,
-            "Free Willy 2" : 35,
-            "The Birdcage" : 25,
-            "Nutty Professor" : 411,
-            "GoldenEye" : 2,
-            "Apollo 13" : 28,
-            "Jurassic Park" : 82,
-            "Forrest Gump" : 69,
-            "Braveheart" : 22,
-            "Twelve Monkeys" : 7,
-            "Return of the Jedi" : 181,
-            "Se7en" : 11,
-            "Aliens" : 176,
-            "Empire Strikes Back" : 172,
-            "Star Wars" : 50,
-            "2001 Space Odyssey" : 135,
-            "Fargo" : 100,
-            "Clockwork Orange" : 179,
+            "Batman Forever" : 28,
+            "Bad Boys" : 26,
+            "Free Willy" : 77,
+            "My Fair Lady" : 484,
+            "Free Willy 2" : 34,
+            "The Birdcage" : 24,
+            "Nutty Professor" : 410,
+            "GoldenEye" : 1,
+            "Apollo 13" : 27,
+            "Jurassic Park" : 81,
+            "Forrest Gump" : 68,
+            "Braveheart" : 21,
+            "Twelve Monkeys" : 6,
+            "Return of the Jedi" : 180,
+            "Se7en" : 10,
+            "Aliens" : 175,
+            "Empire Strikes Back" : 171,
+            "Star Wars" : 49,
+            "2001 Space Odyssey" : 134,
+            "Fargo" : 99,
+            "Clockwork Orange" : 178,
         }
 
     def get_plot_data(self, data, ids):
@@ -141,18 +141,12 @@ class Visualizer:
             #     textcoords = 'offset points', ha = 'right', fontsize = 10, va = 'bottom',
             #     bbox = dict(boxstyle = 'round,pad=0.5', fc = 'yellow', alpha = 0.5),
             #     arrowprops = dict(arrowstyle = '->', connectionstyle = 'arc3,rad=0'))
-            
+
             # Simpler plotting Style - KG
             plt.annotate(label, (x_val, y_val))
 
         plt.title ("2-D Approximation of Movie Data")
         plt.show()
-
-
-
-
-
-
 
 
 if __name__ == '__main__':

@@ -14,7 +14,7 @@ class SGD:
 
     def __init__(self):
         # The number of latent factors. We will use 20 b/c Yisong Yue told us to.
-        self.k = 3
+        self.k = 20
         self.regularizer = 1.0
         self.learning_rate = .001
         self.cutoff = .0001
@@ -31,8 +31,6 @@ class SGD:
 
         Y_rows = len(self.Y)
         Y_cols = len(self.Y[0])
-
-        #print self.Y
 
         # A  m x k  matrix. Initialized with random values.
         self.U = [[random.random() for i in range(self.k)] for i in range(Y_rows)]
@@ -59,9 +57,13 @@ class SGD:
         #    self.training_points.append((i, j))
         #    self.Y.append(row)
 
+<<<<<<< HEAD
 
 
     def run(self, learning_rate = 0.001, regularizer = 10):
+=======
+    def run(self):
+>>>>>>> 319ae4785bf609e5b3aee5b94d101e1ad912f800
         '''
         Run SGD until convergence.
         '''
@@ -79,8 +81,7 @@ class SGD:
         self.old_error = 1000000
         self.should_stop = False
         while (True):
-            time.sleep(0.1)
-            print 'Epoch', epochs
+            print '=============== Epoch', epochs, '==============='
 
             # Keep track of old matrices to see how much this epoch changes them
             U_old = copy.deepcopy(self.U)
@@ -90,25 +91,25 @@ class SGD:
             random.shuffle(self.training_points)
             count = 1
             for point in self.training_points:
-
+                # Every 5000 points we will see if the error is going up; if so,
+                # we will stop SGD
                 if count % 5000 == 0:
                     print 'point #', count
                     error = self.get_error()
                     print 'Error =', error
                     print 'Old Error = ', self.old_error
-
-                    if error > self.old_error: 
+                    if error > self.old_error:
                         print 'The error went up. Stopping!'
                         self.should_stop = True
                         break
-
                     self.old_error = error
-
                 self.sgd_step(point)
                 count += 1
 
+            # Stop if error went up
             if self.should_stop:
                 break
+
             # Get differences between updated and old matrices, filter out
             # all differences that are greater than .01
             U_diff = np.subtract(self.U, U_old)
@@ -120,11 +121,10 @@ class SGD:
                 high_diffs.extend(filter(lambda x : x > self.cutoff, V_row))
 
             if not high_diffs:
-                print 'Differences are all less than .01, so we break!'
+                print 'Differences are all less than', self.cutoff, ', so we break!'
                 break
 
             error = self.get_error()
-
             print 'Error =', error
 
             epochs += 1
@@ -153,17 +153,9 @@ class SGD:
         U_i_row = self.U[i]
         U_other_rows = np.vstack((self.U[:i], self.U[i + 1:]))
         U_grads = self.learning_rate * (self.regularizer / N) * U_other_rows
-
-        U_i_shift = (self.regularizer / N) * U_i_row
-        error_shift = -self.V[:,j] * (self.Y[i][j] - np.dot(U_i_row, self.V[:,j]))
-
-
-        U_grads_i = self.learning_rate * (U_i_shift + error_shift)
-
-
+        U_grads_i = self.learning_rate * ((self.regularizer / N) * U_i_row \
+                - self.V[:,j] * (self.Y[i][j] - np.dot(U_i_row, self.V[:,j])))
         U_grads = np.insert(U_grads, i, U_grads_i, 0)
-        # print "Done calculating U gradients, going to move on to V gradients"
-        # pdb.set_trace()
 
         # Transpose V to make it easier to work with (so we can work with rows
         # instead of columns).
@@ -181,17 +173,9 @@ class SGD:
         Vt_grads = np.insert(Vt_grads, j, Vt_grads_j, 0)
         V_grads = np.transpose(Vt_grads)
 
-        # print "Done calculating V gradients, going to shift matrices"
-        # pdb.set_trace()        
-
         # Perform shifts
-        # print "Shifting U matrix: %s \n\n\nBy %s"%(self.U, U_grads)
-        # print "Shifting V matrix: %s \n\n\nBy %s"%(self.V, V_grads)        
-
         self.U = np.subtract(self.U, U_grads)
         self.V = np.subtract(self.V, V_grads)
-        # print "Done performing shift"
-        # pdb.set_trace()
 
     def get_error(self):
         '''
@@ -202,11 +186,6 @@ class SGD:
         # Get squared differences between Y and UV for the indices of Y that
         # we initially initialized
         UV = np.dot(self.U, self.V)
-
-        # print "%s\n"%self.U
-        # print "%s\n"%self.V
-        # print "\n\n\n"
-        # print UV
         sum_errors = 0
         for point in self.training_points:
             i, j = point
