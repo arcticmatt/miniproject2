@@ -71,7 +71,7 @@ class SGD:
         epochs = 1
         self.old_error = 10e9
         self.should_stop = False
-        while (epochs < 20):
+        while (epochs < 10):
             print 'Epoch', epochs
 
             # Update coefficients for Nesterov GD
@@ -85,7 +85,7 @@ class SGD:
                 count += 1
 
             error = self.get_error()
-            if error > self.old_error: 
+            if error > self.old_error:
                 print 'The error went up. Stopping!'
                 self.should_stop = True
                 break
@@ -145,7 +145,7 @@ class SGD:
         Vt_other_grad_j = -self.U[i,:] * (self.Y[i][j] - (np.dot(self.U[i,:], Vt_j_row)))
         Vt_grads[j] += (learning_rate * Vt_other_grad_j)
         V_grads = np.transpose(Vt_grads)
-      
+
 
         self.U = np.subtract(self.U, U_grads)
         self.V = np.subtract(self.V, V_grads)

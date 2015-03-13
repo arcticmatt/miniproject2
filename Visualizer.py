@@ -13,6 +13,7 @@ def transpose(matrix):
         out.append(map(lambda row: row[i], matrix))
     return out
 
+
 class Visualizer:
     '''
     Runs SVD to decompose the data matrix X into U Sigma V^T, project X
@@ -61,31 +62,38 @@ class Visualizer:
         Filter out data points representing movies/users
         that do not match the provided id
         '''
+
         out = []
         for i in range(len(data[0])):
-            if i in ids:
+            if ids is None or i in ids:
                 out.append(map(lambda row: row[i], data))
         return transpose(out)
 
-    def get_user_data(self, ids):
+    def get_user_data(self, ids=None):
         return self.get_plot_data(self.U, ids)
 
-    def get_movie_data(self, ids):
+    def get_movie_data(self, ids=None):
         return self.get_plot_data(self.V, ids)
 
+    def visualize_without_running(self, U_fname, V_fname):
+        self.parser = Parser()
+        self.U = transpose(self.parser.read_from_csv(U_fname, 'U'))
+        self.V = self.parser.read_from_csv(V_fname, 'V')
 
-    def __init__(self):
-        self.sgd = SGD()
-        self.U = transpose(self.sgd.U)
-        self.V = self.sgd.V
+    def __init__(self, norun = False, uname = 'U.txt', vname = 'V.txt'):
+        if norun:
+            self.visualize_without_running(uname, vname)
+        else:
+            self.sgd = SGD()
+            try:
+                self.sgd.run()
+            except KeyboardInterrupt:
+                pass
+
+            self.U = transpose(self.sgd.U)
+            self.V = self.sgd.V
 
     def run(self, num_components=2):
-        try:
-            self.sgd.run()
-        except KeyboardInterrupt:
-            pass
-        self.U /= np.var(self.U)
-
         print "Original dimensions of U: %s x %s"%(len(self.U), len(self.U[0]))
         print "Original dimensions of V: %s x %s"%(len(self.V), len(self.V[0]))
 
@@ -95,90 +103,72 @@ class Visualizer:
         # Extract the first two columns of A
         A2 = np.matrix(transpose(map(lambda row: row[:2], A)))
 
-        # print "Column vector for free willy: %s"%(self.U)
-
-
-        '''
-        # Print free willy columns before transforming
-        testing_matrix = transpose(self.U)
-        free_willy_1 = testing_matrix[77]
-        free_willy_2 = testing_matrix[34]
-
-        print "Free willy 1: %s"%free_willy_1
-        print "Free willy 2: %s"%free_willy_2
-        '''
-
         # Project U and V to the first two columns of A
-        try:
-            self.U = (A2 * self.U).tolist()
-            self.V = (A2 * self.V).tolist()
-        except ValueError, e:
-            print "Ran into an error, A2 dimensions: %s x %s."%(len(A2), len(A2[0]))
-            print "U dimensions: %s x %s"%(len(self.U), len(self.U[0]))
-            raise e
+        self.U = (A2 * self.U).tolist()
+        self.V = (A2 * self.V).tolist()
 
 
         print "New dimensions of U: %s x %s"%(len(self.U), len(self.U[0]))
         print "New dimensions of V: %s x %s"%(len(self.V), len(self.V[0]))
 
-        '''
-        # Print free willy columns after transforming
-        testing_matrix = transpose(self.U)
-        free_willy_1 = testing_matrix[77]
-        free_willy_2 = testing_matrix[34]
 
-        print "Free willy 1: %s"%free_willy_1
-        print "Free willy 2: %s"%free_willy_2
-        '''
+        # Get info and coordinates for 'target' movies (those used by
+        # Prof. Yue in his example)
+        target_movies_info = self.get_target_movies()
+        movie_data = self.get_movie_data(target_movies_info.values())
+        target_movie_names = target_movies_info.keys()
 
-        # Get ids of movies we want to plot
-        to_plot = self.get_target_movies()
+        # Get info and coordinates for horror movies
+        horror_movie_info = self.get_movie_type("Horror")
+        horror_movie_names = horror_movie_info.keys()
+        horror_movie_data = self.get_movie_data(horror_movie_info.values())
 
-        # Plot horror movies
-        # to_plot = self.get_movie_type("Horror")
-
-        # Get the coordinates of movies with the IDs we want to plot
-        movie_data = self.get_movie_data(to_plot.values())
+        # Get info and coordinates for all users and movies
+        all_movies = self.get_movie_data()
+        user_data = self.get_user_data()
 
         # Plot movies we care about with labels
-        self.plot(movie_data[0], movie_data[1], "$V_x$", "$V_y$", to_plot.keys())
+        data_series = [(movie_data[0], movie_data[1], target_movie_names)]
+        self.plot(data_series, "$V_x$", "$V_y$", "2-D Approximation of Movie Data")
+
+        # Plot all movies and users
+        data_series = [(movie_data[0], movie_data[1], []), (user_data[0], user_data[1], [])]
+        self.plot(data_series, "$V_x$", "$V_y$", "All User (red) and Movie (blue) Data")
+
+        # Plot all horror movies
+        data_series = [(horror_movie_data[0], horror_movie_data[1], horror_movie_names)]
+        self.plot(data_series, "$V_x$", "$V_y$", "2-D Approximation of Horror Movie Data")
 
 
-    def plot(self, x, y, xlabel, ylabel, labels):
+    def plot(self, data_series, xlabel, ylabel, title):
         '''
         Plots the specified x and y data lists
         using the specified x and y labels
         '''
 
-        assert(len(x) == len(y) == len(labels))
-        print "Plotting %s points: "%len(x)
+        colors = ["orange", "green", "red", "blue"]
 
-        plt.scatter(x, y)
-        plt.ylabel(ylabel)
-        plt.xlabel(xlabel)
+        for x, y, labels in data_series:
+            plt.scatter(x, y, color=colors.pop())
+            plt.ylabel(ylabel)
+            plt.xlabel(xlabel)
 
-        for label, x_val, y_val in zip(labels, x, y):
+            for label, x_val, y_val in zip(labels, x, y):
 
-            textoffset = (-20, 20)
+                textoffset = (-20, 20)
 
-            # plt.annotate(
-            #     label,
-            #     xy = (x_val, y_val), xytext = textoffset,
-            #     textcoords = 'offset points', ha = 'right', fontsize = 10, va = 'bottom',
-            #     bbox = dict(boxstyle = 'round,pad=0.5', fc = 'yellow', alpha = 0.5),
-            #     arrowprops = dict(arrowstyle = '->', connectionstyle = 'arc3,rad=0'))
-            
-            # Simpler plotting Style - KG
-            plt.annotate(label, (x_val, y_val))
+                plt.annotate(
+                        label,
+                        xy = (x_val, y_val), xytext = textoffset,
+                        textcoords = 'offset points', ha = 'right', fontsize = 10, va = 'bottom',
+                        bbox = dict(boxstyle = 'round,pad=0.5', fc = 'yellow', alpha = 0.5),
+                        arrowprops = dict(arrowstyle = '->', connectionstyle = 'arc3,rad=0'))
 
-        plt.title ("2-D Approximation of Movie Data")
+                # Simpler plotting Style - KG
+                #plt.annotate(label, (x_val, y_val))
+
+        plt.title (title)
         plt.show()
-
-
-
-
-
-
 
 
 if __name__ == '__main__':
@@ -189,27 +179,6 @@ if __name__ == '__main__':
     assert(tr == [[1, 4, 7], [2, 5, 8], [3, 6, 9]])
 
     # Run the visualizer
+    #v = Visualizer(norun = True, uname = 'U1426232771.97_sav.txt', vname = 'V1426232771.97_sav.txt')
     v = Visualizer()
     v.run()
-
-
-    '''
-    matrix = [
-    [1, 1, 1, 0, 0],
-    [3, 3, 3, 0, 0],
-    [4, 4, 4, 0, 0],
-    [5, 5, 5, 0, 0],
-    [0, 2, 0, 4, 4],
-    [0, 0, 0, 5, 5],
-    [0, 1, 0, 2, 2]
-    ]
-
-    # decomposer = d.TruncatedSVD(3)
-    # result = decomposer.fit_transform(transpose(matrix))
-    U, s, V = np.linalg.svd(matrix)
-
-    print "U: %s"%U
-    print "Sigma: %s"%s
-    print "V: %s"%V
-    # print map(lambda row: map(lambda col: round(col, 3), row), result)
-    '''
