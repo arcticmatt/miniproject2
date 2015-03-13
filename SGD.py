@@ -16,7 +16,7 @@ class SGD:
     def __init__(self):
         # The number of latent factors. We will use 20 b/c Yisong Yue told us to.
         self.k = 20
-        self.regularizer = 10
+        self.regularizer = 1e-10
         self.learning_rate = .01
         self.cutoff = .0001
 
@@ -123,9 +123,13 @@ class SGD:
         # separately and putting the results together.
 
         U_i_row = self.U[i]
-        U_grads = self.learning_rate * (self.regularizer / N) * self.U
-        U_other_grad_i = -self.V[:,j] * ((self.Y[i][j] - self.Y_avg) - (np.dot(U_i_row, self.V[:,j]) + self.a[i] + self.b[j]))
-        U_grads[i] += (self.learning_rate * U_other_grad_i)
+        U_i_error = -self.V[:,j] * ((self.Y[i][j] - self.Y_avg) - (np.dot(U_i_row, self.V[:,j]) + self.a[i] + self.b[j]))
+        U_i_regularization = self.regularizer * U_i_row
+        U_i_grad = self.learning_rate * (U_i_error + U_i_regularization)
+        self.U[i] -= U_i_grad
+        print self.U[i]
+
+        # pdb.set_trace()
 
         # Transpose V to make it easier to work with (so we can work with rows
         # instead of columns).
@@ -137,28 +141,21 @@ class SGD:
 
         Vt = np.transpose(self.V)
         Vt_j_row = Vt[j]
-        Vt_grads = self.learning_rate * (self.regularizer / N) * Vt
-        Vt_other_grad_j = -self.U[i,:] * ((self.Y[i][j] - self.Y_avg) - (np.dot(self.U[i,:], Vt_j_row) + self.a[i] + self.b[j]))
-        Vt_grads[j] += (self.learning_rate * Vt_other_grad_j)
-        V_grads = np.transpose(Vt_grads)
+        Vt_j_error = -self.U[i,:] * ((self.Y[i][j] - self.Y_avg) - (np.dot(self.U[i,:], Vt_j_row) + self.a[i] + self.b[j]))
+        Vt_j_regularization = self.regularizer * Vt_j_row 
+        V_j_grad = np.transpose(Vt_j_error + Vt_j_regularization)
+        self.V[:, j] -= V_j_grad
 
 
         # Calculate the gradients for the a vector
-        a_i_val = self.a[i]
-        a_grads = self.learning_rate * (self.regularizer / N) * self.a
-        a_other_grad_i = -((self.Y[i][j] - self.Y_avg) - (np.dot(self.U[i,:], Vt_j_row) + self.a[i] + self.b[j]))
-        a_grads[i] += self.learning_rate * a_other_grad_i
+        a_regularization = self.a[i] * self.regularizer
+        a_error = -((self.Y[i][j] - self.Y_avg) - (np.dot(self.U[i,:], Vt_j_row) + self.a[i] + self.b[j]))
+        self.a[i] -= self.learning_rate * (a_error + a_regularization)
 
-        b_j_val = self.b[j]
-        b_grads = self.learning_rate * (self.regularizer / N) * self.b
-        b_other_grad_j = -((self.Y[i][j] - self.Y_avg) - (np.dot(self.U[i,:], Vt_j_row) + self.a[i] + self.b[j]))
-        a_grads[i] += self.learning_rate * b_other_grad_j
+        b_regularization = self.b[j] * self.regularizer
+        b_error = -((self.Y[i][j] - self.Y_avg) - (np.dot(self.U[i,:], Vt_j_row) + self.a[i] + self.b[j]))
+        self.b[j] -= self.learning_rate * (b_error + b_regularization)
 
-        # Perform shifts
-        self.U = np.subtract(self.U, U_grads)
-        self.V = np.subtract(self.V, V_grads)
-        self.a = np.subtract(self.a, a_grads)
-        self.b = np.subtract(self.b, b_grads)
 
     def get_error(self):
         '''
