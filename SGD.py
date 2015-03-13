@@ -71,7 +71,7 @@ class SGD:
         epochs = 1
         self.old_error = 1000000
         self.should_stop = False
-        while epochs < 2:
+        while epochs < 300:
             print '=============== Epoch', epochs, '==============='
 
             # Keep track of old matrices to see how much this epoch changes them
