@@ -142,20 +142,11 @@ class SGD:
         # the i'th row, calculating the gradient for the matrix sans that row (just
         # one multiplication), and then calculating the gradient for the i'th row
         # separately and putting the results together.
+
         U_i_row = self.U[i]
-        U_other_rows = np.vstack((self.U[:i], self.U[i + 1:]))
-        U_grads = self.learning_rate * (self.regularizer / N) * U_other_rows
-
-        U_i_shift = (self.regularizer / N) * U_i_row
-        error_shift = -self.V[:,j] * (self.Y[i][j] - np.dot(U_i_row, self.V[:,j]))
-
-
-        U_grads_i = self.learning_rate * (U_i_shift + error_shift)
-
-
-        U_grads = np.insert(U_grads, i, U_grads_i, 0)
-        # print "Done calculating U gradients, going to move on to V gradients"
-        # pdb.set_trace()
+        U_grads = self.learning_rate * (self.regularizer / N) * self.U
+        U_other_grad_i = -self.V[:,j] * (self.Y[i][j] - (np.dot(U_i_row, self.V[:,j])))
+        U_grads[i] += (self.learning_rate * U_other_grad_i)
 
         # Transpose V to make it easier to work with (so we can work with rows
         # instead of columns).
@@ -164,21 +155,14 @@ class SGD:
         # one multiplication), and then calculating the gradient for the j'th row
         # separately and putting the results together. Then tranpose the results
         # to make the dimensions consistent with V.
+
         Vt = np.transpose(self.V)
         Vt_j_row = Vt[j]
-        Vt_other_rows = np.vstack((Vt[:j], Vt[j + 1:]))
-        Vt_grads = self.learning_rate * (self.regularizer / N) * Vt_other_rows
-        Vt_grads_j = self.learning_rate * ((self.regularizer / N) * Vt_j_row \
-                        - self.U[i,:] * (self.Y[i][j] - np.dot(self.U[i,:], Vt_j_row)))
-        Vt_grads = np.insert(Vt_grads, j, Vt_grads_j, 0)
+        Vt_grads = self.learning_rate * (self.regularizer / N) * Vt
+        Vt_other_grad_j = -self.U[i,:] * (self.Y[i][j] - (np.dot(self.U[i,:], Vt_j_row)))
+        Vt_grads[j] += (self.learning_rate * Vt_other_grad_j)
         V_grads = np.transpose(Vt_grads)
-
-        # print "Done calculating V gradients, going to shift matrices"
-        # pdb.set_trace()        
-
-        # Perform shifts
-        # print "Shifting U matrix: %s \n\n\nBy %s"%(self.U, U_grads)
-        # print "Shifting V matrix: %s \n\n\nBy %s"%(self.V, V_grads)        
+      
 
         self.U = np.subtract(self.U, U_grads)
         self.V = np.subtract(self.V, V_grads)
