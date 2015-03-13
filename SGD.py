@@ -17,7 +17,7 @@ class SGD:
         # The number of latent factors. We will use 20 b/c Yisong Yue told us to.
         self.k = 20
         self.regularizer = 10
-        self.learning_rate = .0001
+        self.learning_rate = .01
         self.cutoff = .0001
 
         # A  m x n  matrix of movie ratings, where y_ij corresponds to user (i+1)'s
@@ -32,6 +32,7 @@ class SGD:
 
         # Average of all observations in Y
         self.Y_avg = (sum(map(sum, self.Y))) / float(len(self.training_points))
+        print self.Y_avg
 
         Y_rows = len(self.Y)
         Y_cols = len(self.Y[0])
@@ -70,7 +71,7 @@ class SGD:
         epochs = 1
         self.old_error = 1000000
         self.should_stop = False
-        while epochs < 50:
+        while epochs < 300:
             print '=============== Epoch', epochs, '==============='
 
             # Keep track of old matrices to see how much this epoch changes them
@@ -140,7 +141,7 @@ class SGD:
         a_i_val = self.a[i]
         a_grads = self.learning_rate * (self.regularizer / N) * self.a
         a_other_grad_i = -((self.Y[i][j] - self.Y_avg) - (np.dot(self.U[i,:], Vt_j_row) + self.a[i] + self.b[j]))
-        a_grads[i] += self.learning_rate * a_other_grad_i        
+        a_grads[i] += self.learning_rate * a_other_grad_i
 
         b_j_val = self.b[j]
         b_grads = self.learning_rate * (self.regularizer / N) * self.b
@@ -165,7 +166,7 @@ class SGD:
         sum_errors = 0
         for point in self.training_points:
             i, j = point
-            error = math.pow(self.Y[i][j] - (UV[i][j] + self.a[i] + self.b[j]), 2)
+            error = math.pow(self.Y[i][j] - (self.Y_avg + UV[i][j] + self.a[i] + self.b[j]), 2)
             sum_errors += error
         return sum_errors
 
