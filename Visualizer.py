@@ -80,8 +80,10 @@ class Visualizer:
         self.V = self.sgd.V
 
     def run(self, num_components=2):
-
-        self.sgd.run()
+        try:
+            self.sgd.run()
+        except KeyboardInterrupt:
+            pass
         self.U /= np.var(self.U)
 
         print "Original dimensions of U: %s x %s"%(len(self.U), len(self.U[0]))
