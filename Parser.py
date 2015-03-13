@@ -18,9 +18,53 @@ class Parser:
         # Get a handle for the specified file
         movies = open(filename)
 
+        # We need this list of genres in case the caller
+        # asks for a specific genre, see get_dictionary_of_movie_types
+        self.genres = ["movieId", "movieTitle", "Unkown", 
+        "Action", "Adventure", "Animation", "Children's", "Comedy",
+        "Crime", "Documentary", "Drama", "Fantasy", "Film-Noir", "Horror", 
+        "Musical", "Mystery", "Romance", "Sci-Fi", "Thriller", "War", "Western"]
+
+
+        self.movies_arr = []
         for line in movies:
-            for word in line.split(" "):
-                x.append(word)
+            line = line.rstrip()
+            movie = []
+            for word in line.split('\t'):
+                movie.append(word)
+            self.movies_arr.append(movie)
+
+    def get_dictionary_of_movie_types(self, type, limit = 100):
+        movies = {}
+        index_to_look_for = -1
+
+        for i in range(len(self.genres)):
+            if self.genres[i] == type:
+                index_to_look_for = i
+
+        # Either we didn't find that type of genre,
+        # or you're looking for 'movieId' or 'movieTitle',
+        # which aren't valid things to look for.
+        if index_to_look_for < 2:
+            raise ValueError ("The type you passed is probably not valid...")
+
+        for movie in self.movies_arr:
+            if movie[index_to_look_for] == '1' and len(movies) < limit:
+                movies[movie[1]] = int(movie[0])
+
+        print movies
+        return movies
+
+
+    
+    def get_horror_movies(self):
+        horror_films = {}
+        for movie in self.movies_arr:
+            if movie[13] == '1':
+                horror_films[movie[1]] = int(movie[0])
+
+        return horror_films
+
 
 
     def parse_ratings_data(self, filename):

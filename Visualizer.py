@@ -21,6 +21,11 @@ class Visualizer:
 
     '''
 
+    def get_movie_type(self, type):
+        self.parser = Parser()
+        self.parser.parse_movie_data('data/movies.txt')
+        return self.parser.get_dictionary_of_movie_types(type, limit = 20)
+
     def get_target_movies(self):
         '''
         Return a dict mapping the strings (the names of movies
@@ -81,7 +86,7 @@ class Visualizer:
         print "Original dimensions of V: %s x %s"%(len(self.V), len(self.V[0]))
 
         # Perform an SVD on U = A * sigma * B
-        A, sigma, B = np.linalg.svd(self.U)
+        A, sigma, B = np.linalg.svd(self.V)
 
         # Extract the first two columns of A
         A2 = np.matrix(transpose(map(lambda row: row[:2], A)))
@@ -101,7 +106,10 @@ class Visualizer:
 
 
         # Get ids of movies we want to plot
-        to_plot = self.get_target_movies()
+        #to_plot = self.get_target_movies()
+
+        # Plot horror movies
+        to_plot = self.get_movie_type("Horror")
 
         # Get the coordinates of movies with the IDs we want to plot
         movie_data = self.get_movie_data(to_plot.values())
@@ -127,15 +135,15 @@ class Visualizer:
 
             textoffset = (-20, 20)
 
-            plt.annotate(
-                label,
-                xy = (x_val, y_val), xytext = textoffset,
-                textcoords = 'offset points', ha = 'right', fontsize = 10, va = 'bottom',
-                bbox = dict(boxstyle = 'round,pad=0.5', fc = 'yellow', alpha = 0.5),
-                arrowprops = dict(arrowstyle = '->', connectionstyle = 'arc3,rad=0'))
+            # plt.annotate(
+            #     label,
+            #     xy = (x_val, y_val), xytext = textoffset,
+            #     textcoords = 'offset points', ha = 'right', fontsize = 10, va = 'bottom',
+            #     bbox = dict(boxstyle = 'round,pad=0.5', fc = 'yellow', alpha = 0.5),
+            #     arrowprops = dict(arrowstyle = '->', connectionstyle = 'arc3,rad=0'))
             
             # Simpler plotting Style - KG
-            # plt.annotate(label, (x_val, y_val))
+            plt.annotate(label, (x_val, y_val))
 
         plt.title ("2-D Approximation of Movie Data")
         plt.show()
