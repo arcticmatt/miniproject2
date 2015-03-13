@@ -15,8 +15,8 @@ class SGD:
     def __init__(self):
         # The number of latent factors. We will use 20 b/c Yisong Yue told us to.
         self.k = 20
-        self.regularizer = 1
-        self.learning_rate = .001
+        self.regularizer = 10
+        self.learning_rate = .0001
         self.cutoff = .0001
 
         # A  m x n  matrix of movie ratings, where y_ij corresponds to user (i+1)'s
@@ -44,11 +44,11 @@ class SGD:
         self.V = np.array(self.V) # make numpy array to make matrix operations easier
 
         # Vector of bias/offset terms, one for each user
-        self.a = [random.random() for i in range(Y_rows)]
+        self.a = [random.random() / 1000 for i in range(Y_rows)]
         self.a = np.array(self.a)
 
         # Vector of bias/offset terms, one for each movie
-        self.b = [random.random() for i in range(Y_cols)]
+        self.b = [random.random() / 1000 for i in range(Y_cols)]
         self.b = np.array(self.b)
 
     def load_data(self):
@@ -77,7 +77,7 @@ class SGD:
         epochs = 1
         self.old_error = 1000000
         self.should_stop = False
-        while (True):
+        while epochs < 10:
             print '=============== Epoch', epochs, '==============='
 
             # Keep track of old matrices to see how much this epoch changes them
@@ -97,8 +97,8 @@ class SGD:
                     print 'Old Error = ', self.old_error
                     if error > self.old_error:
                         print 'The error went up. Stopping!'
-                        self.should_stop = True
-                        break
+                        #self.should_stop = True
+                        #break
                     self.old_error = error
                 self.sgd_step(point)
                 count += 1
@@ -119,14 +119,14 @@ class SGD:
 
             if not high_diffs:
                 print 'Differences are all less than', self.cutoff, ', so we break!'
-                break
+                #break
 
             error = self.get_error()
             print 'Error =', error
 
             epochs += 1
             # Shrink learning rate
-            self.learning_rate /= float(epochs)
+            #self.learning_rate /= float(epochs)
 
         print 'Done running SGD'
 
@@ -208,7 +208,7 @@ class SGD:
         sum_errors = 0
         for point in self.training_points:
             i, j = point
-            error = math.pow(self.Y[i][j] - UV[i][j], 2)
+            error = math.pow(self.Y[i][j] - (UV[i][j] + self.a[i] + self.b[j]), 2)
             sum_errors += error
         return sum_errors
 
