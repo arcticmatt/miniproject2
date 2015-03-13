@@ -16,8 +16,8 @@ class SGD:
     def __init__(self):
         # The number of latent factors. We will use 20 b/c Yisong Yue told us to.
         self.k = 20
-        self.regularizer = 1e-10
-        self.learning_rate = .01
+        self.regularizer = 10
+        self.learning_rate = .02
         self.cutoff = .0001
 
         # A  m x n  matrix of movie ratings, where y_ij corresponds to user (i+1)'s
@@ -123,11 +123,11 @@ class SGD:
         # separately and putting the results together.
 
         U_i_row = self.U[i]
+        U_i_reg = (self.regularizer / N) * self.U[i]
         U_i_error = -self.V[:,j] * ((self.Y[i][j] - self.Y_avg) - (np.dot(U_i_row, self.V[:,j]) + self.a[i] + self.b[j]))
-        U_i_regularization = self.regularizer * U_i_row
-        U_i_grad = self.learning_rate * (U_i_error + U_i_regularization)
-        self.U[i] -= U_i_grad
-        print self.U[i]
+        U_grads_i = self.learning_rate * (U_i_reg + U_i_error)
+        self.U[i] -= U_grads_i  
+        
 
         # pdb.set_trace()
 
@@ -142,8 +142,8 @@ class SGD:
         Vt = np.transpose(self.V)
         Vt_j_row = Vt[j]
         Vt_j_error = -self.U[i,:] * ((self.Y[i][j] - self.Y_avg) - (np.dot(self.U[i,:], Vt_j_row) + self.a[i] + self.b[j]))
-        Vt_j_regularization = self.regularizer * Vt_j_row 
-        V_j_grad = np.transpose(Vt_j_error + Vt_j_regularization)
+        Vt_j_regularization = (self.regularizer / N) * Vt_j_row 
+        V_j_grad = np.transpose( self.learning_rate * (Vt_j_error + Vt_j_regularization))
         self.V[:, j] -= V_j_grad
 
 
@@ -155,7 +155,7 @@ class SGD:
         b_regularization = self.b[j] * self.regularizer
         b_error = -((self.Y[i][j] - self.Y_avg) - (np.dot(self.U[i,:], Vt_j_row) + self.a[i] + self.b[j]))
         self.b[j] -= self.learning_rate * (b_error + b_regularization)
-
+        
 
     def get_error(self):
         '''

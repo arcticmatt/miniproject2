@@ -84,7 +84,10 @@ class Visualizer:
             self.visualize_without_running(uname, vname)
         else:
             self.sgd = SGD()
-            self.sgd.run()
+            try:
+                self.sgd.run()
+            except KeyboardInterrupt:
+                pass
             self.U = transpose(self.sgd.U)
             self.V = self.sgd.V
 
