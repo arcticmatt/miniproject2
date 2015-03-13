@@ -46,11 +46,11 @@ class SGD:
         self.V = np.array(self.V) # make numpy array to make matrix operations easier
 
         # Vector of bias/offset terms, one for each user
-        self.a = [random.random() / 1000 for i in range(Y_rows)]
+        self.a = [random.random() for i in range(Y_rows)]
         self.a = np.array(self.a)
 
         # Vector of bias/offset terms, one for each movie
-        self.b = [random.random() / 1000 for i in range(Y_cols)]
+        self.b = [random.random() for i in range(Y_cols)]
         self.b = np.array(self.b)
 
     def load_data(self):
@@ -71,7 +71,7 @@ class SGD:
         epochs = 1
         self.old_error = 1000000
         self.should_stop = False
-        while epochs < 300:
+        while epochs < 50:
             print '=============== Epoch', epochs, '==============='
 
             # Keep track of old matrices to see how much this epoch changes them
