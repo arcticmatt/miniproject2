@@ -141,18 +141,12 @@ class Visualizer:
             #     textcoords = 'offset points', ha = 'right', fontsize = 10, va = 'bottom',
             #     bbox = dict(boxstyle = 'round,pad=0.5', fc = 'yellow', alpha = 0.5),
             #     arrowprops = dict(arrowstyle = '->', connectionstyle = 'arc3,rad=0'))
-            
+
             # Simpler plotting Style - KG
             plt.annotate(label, (x_val, y_val))
 
         plt.title ("2-D Approximation of Movie Data")
         plt.show()
-
-
-
-
-
-
 
 
 if __name__ == '__main__':

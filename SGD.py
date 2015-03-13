@@ -77,20 +77,18 @@ class SGD:
             random.shuffle(self.training_points)
             count = 1
             for point in self.training_points:
-
+                # Every 5000 points we will see if the error is going up; if so,
+                # we will stop SGD
                 if count % 5000 == 0:
                     print 'point #', count
                     error = self.get_error()
                     print 'Error =', error
                     print 'Old Error = ', self.old_error
-
                     if error > self.old_error:
                         print 'The error went up. Stopping!'
                         self.should_stop = True
                         break
-
                     self.old_error = error
-
                 self.sgd_step(point)
                 count += 1
 
@@ -109,11 +107,10 @@ class SGD:
                 high_diffs.extend(filter(lambda x : x > self.cutoff, V_row))
 
             if not high_diffs:
-                print 'Differences are all less than', cutoff, ', so we break!'
+                print 'Differences are all less than', self.cutoff, ', so we break!'
                 break
 
             error = self.get_error()
-
             print 'Error =', error
 
             epochs += 1
