@@ -85,7 +85,11 @@ class Visualizer:
             self.visualize_without_running(uname, vname)
         else:
             self.sgd = SGD()
-            self.sgd.run()
+            try:
+                self.sgd.run()
+            except KeyboardInterrupt:
+                pass
+
             self.U = transpose(self.sgd.U)
             self.V = self.sgd.V
 
@@ -175,28 +179,6 @@ if __name__ == '__main__':
     assert(tr == [[1, 4, 7], [2, 5, 8], [3, 6, 9]])
 
     # Run the visualizer
-    v = Visualizer(norun = True, uname = 'U1426232771.97_sav.txt', vname = 'V1426232771.97_sav.txt')
-    #v = Visualizer()
+    #v = Visualizer(norun = True, uname = 'U1426232771.97_sav.txt', vname = 'V1426232771.97_sav.txt')
+    v = Visualizer()
     v.run()
-
-
-    '''
-    matrix = [
-    [1, 1, 1, 0, 0],
-    [3, 3, 3, 0, 0],
-    [4, 4, 4, 0, 0],
-    [5, 5, 5, 0, 0],
-    [0, 2, 0, 4, 4],
-    [0, 0, 0, 5, 5],
-    [0, 1, 0, 2, 2]
-    ]
-
-    # decomposer = d.TruncatedSVD(3)
-    # result = decomposer.fit_transform(transpose(matrix))
-    U, s, V = np.linalg.svd(matrix)
-
-    print "U: %s"%U
-    print "Sigma: %s"%s
-    print "V: %s"%V
-    # print map(lambda row: map(lambda col: round(col, 3), row), result)
-    '''

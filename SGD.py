@@ -15,9 +15,10 @@ class SGD:
 
     def __init__(self):
         # The number of latent factors. We will use 20 b/c Yisong Yue told us to.
+        self.lmbda = 0
         self.k = 20
         self.regularizer = 10
-        self.learning_rate = .01
+        self.learning_rate = .05
         self.cutoff = .0001
 
         # A  m x n  matrix of movie ratings, where y_ij corresponds to user (i+1)'s
@@ -80,6 +81,10 @@ class SGD:
 
             # Before each epoch, shuffle the training points to randomize the process.
             random.shuffle(self.training_points)
+
+            # Update the nesterov coefficients for this epoch
+            self.update_nesterov_index()
+
             count = 1
             for point in self.training_points:
                 self.sgd_step(point)
@@ -108,6 +113,13 @@ class SGD:
         error = self.get_error()
         print 'Error =', error
 
+
+    def update_nesterov_index(self):
+        self.lmbda = (1.0 + math.sqrt(1.0 + 4.0 * (self.lmbda ** 2))) / 2.0
+        self.gamma = (1.0 - self.lmbda) / (self.lmbda + 1.0)
+        print "Setting gamma to %s"%self.gamma
+
+
     def sgd_step(self, point):
         '''
         Perform one step of stochastic gradient descent, given a tuple of
@@ -117,6 +129,8 @@ class SGD:
         i, j = point
         N = float(len(self.training_points))
 
+        learning_rate = self.learning_rate * (1 - self.gamma)
+
         # Calculuate the gradients for the U matrix. Do this by pulling out
         # the i'th row, calculating the gradient for the matrix sans that row (just
         # one multiplication), and then calculating the gradient for the i'th row
@@ -125,7 +139,7 @@ class SGD:
         U_i_row = self.U[i]
         U_grads = self.learning_rate * (self.regularizer / N) * self.U
         U_other_grad_i = -self.V[:,j] * ((self.Y[i][j] - self.Y_avg) - (np.dot(U_i_row, self.V[:,j]) + self.a[i] + self.b[j]))
-        U_grads[i] += (self.learning_rate * U_other_grad_i)
+        U_grads[i] += (learning_rate * U_other_grad_i)
 
         # Transpose V to make it easier to work with (so we can work with rows
         # instead of columns).
@@ -137,28 +151,42 @@ class SGD:
 
         Vt = np.transpose(self.V)
         Vt_j_row = Vt[j]
-        Vt_grads = self.learning_rate * (self.regularizer / N) * Vt
+        Vt_grads = learning_rate * (self.regularizer / N) * Vt
         Vt_other_grad_j = -self.U[i,:] * ((self.Y[i][j] - self.Y_avg) - (np.dot(self.U[i,:], Vt_j_row) + self.a[i] + self.b[j]))
-        Vt_grads[j] += (self.learning_rate * Vt_other_grad_j)
+        Vt_grads[j] += (learning_rate * Vt_other_grad_j)
         V_grads = np.transpose(Vt_grads)
 
         # Calculate the gradients for the a vector
         a_i_val = self.a[i]
-        a_grads = self.learning_rate * (self.regularizer / N) * self.a
+        a_grads = learning_rate * (self.regularizer / N) * self.a
         a_other_grad_i = -((self.Y[i][j] - self.Y_avg) - (np.dot(self.U[i,:], Vt_j_row) + self.a[i] + self.b[j]))
-        a_grads[i] += self.learning_rate * a_other_grad_i
+        a_grads[i] += learning_rate * a_other_grad_i
 
         b_j_val = self.b[j]
-        b_grads = self.learning_rate * (self.regularizer / N) * self.b
+        b_grads = learning_rate * (self.regularizer / N) * self.b
         b_other_grad_j = -((self.Y[i][j] - self.Y_avg) - (np.dot(self.U[i,:], Vt_j_row) + self.a[i] + self.b[j]))
-        a_grads[i] += self.learning_rate * b_other_grad_j
+        a_grads[i] += learning_rate * b_other_grad_j
 
-        # Perform shifts
+        
         self.U = np.subtract(self.U, U_grads)
         self.V = np.subtract(self.V, V_grads)
         self.a = np.subtract(self.a, a_grads)
         self.b = np.subtract(self.b, b_grads)
         
+
+        '''
+        # Apply first shift for nesterov gradient descent
+        U_tmp = np.subtract(self.U, U_grads)
+        V_tmp = np.subtract(self.V, V_grads)
+        a_tmp = np.subtract(self.a, a_grads)
+        b_tmp = np.subtract(self.b, b_grads)
+
+        # Perform second shift for nesterov GD
+        self.U = (1 - self.gamma) * U_tmp + self.gamma * self.U
+        self.V = (1 - self.gamma) * V_tmp + self.gamma * self.V
+        self.a = (1 - self.gamma) * a_tmp + self.gamma * self.a
+        self.b = (1 - self.gamma) * b_tmp + self.gamma * self.b
+        '''
 
     def get_error(self):
         '''
