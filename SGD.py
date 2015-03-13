@@ -16,7 +16,7 @@ class SGD:
         # The number of latent factors. We will use 20 b/c Yisong Yue told us to.
         self.k = 20
         self.regularizer = 0.001
-        self.learning_rate = 0.05
+        self.learning_rate = 0.075
         self.cutoff = .0001
         self.lmbda = 0
 
@@ -49,8 +49,8 @@ class SGD:
         file data/data.txt
         '''
 
-        parser = Parser()
-        self.Y, self.training_points = parser.parse_ratings_data('data/data.txt')
+        self.parser = Parser()
+        self.Y, self.training_points = self.parser.parse_ratings_data('data/data.txt')
         #self.Y = []
         #self.training_points = []
         #for i in range(10):
@@ -99,6 +99,12 @@ class SGD:
             self.learning_rate /= float(epochs)
 
         print 'Done running SGD'
+
+        fname_U = 'U' + str(time.time()) + '_sav.txt'
+        fname_V = 'V' + str(time.time()) + '_sav.txt'
+
+        self.parser.write_to_csv(self.U, fname_U)
+        self.parser.write_to_csv(self.V, fname_V)
 
         # Done with SGD; get error
         error = self.get_error()

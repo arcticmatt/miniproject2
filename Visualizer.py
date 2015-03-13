@@ -35,15 +35,18 @@ class Visualizer:
 
         return {
             "Batman Forever" : 28,
+            "Batman Returns" : 230,
+            "Batman & Robin" : 253,
+            "Batman" : 402,
             "Bad Boys" : 26,
             "Free Willy" : 77,
             "My Fair Lady" : 484,
             "Free Willy 2" : 34,
             "The Birdcage" : 24,
-            "Nutty Professor" : 410,
+            #"Nutty Professor" : 410,
             "GoldenEye" : 1,
             "Apollo 13" : 27,
-            "Jurassic Park" : 81,
+            #"Jurassic Park" : 81,
             "Forrest Gump" : 68,
             "Braveheart" : 21,
             "Twelve Monkeys" : 6,
@@ -54,7 +57,7 @@ class Visualizer:
             "Star Wars" : 49,
             "2001 Space Odyssey" : 134,
             "Fargo" : 99,
-            "Clockwork Orange" : 178,
+            #"Clockwork Orange" : 178,
         }
 
     def get_plot_data(self, data, ids):
@@ -73,6 +76,7 @@ class Visualizer:
         return self.get_plot_data(self.U, ids)
 
     def get_movie_data(self, ids=None):
+        print len(self.V)
         return self.get_plot_data(self.V, ids)
 
     def visualize_without_running(self, U_fname, V_fname):
@@ -132,12 +136,16 @@ class Visualizer:
         self.plot(data_series, "$V_x$", "$V_y$", "2-D Approximation of Movie Data")
 
         # Plot all movies and users
-        data_series = [(movie_data[0], movie_data[1], []), (user_data[0], user_data[1], [])]
+        data_series = [(all_movies[0], all_movies[1], []), (user_data[0], user_data[1], [])]
         self.plot(data_series, "$V_x$", "$V_y$", "All User (red) and Movie (blue) Data")
 
         # Plot all horror movies
         data_series = [(horror_movie_data[0], horror_movie_data[1], horror_movie_names)]
         self.plot(data_series, "$V_x$", "$V_y$", "2-D Approximation of Horror Movie Data")
+
+        # Plot all movies, and horror movies
+        data_series = [(all_movies[0], all_movies[1], []), (horror_movie_data[0], horror_movie_data[1], [])]
+        self.plot(data_series, "$V_x$", "$V_y$", "All Movies (blue) and Horror (Red) Data")
 
 
     def plot(self, data_series, xlabel, ylabel, title):
@@ -166,7 +174,6 @@ class Visualizer:
 
                 # Simpler plotting Style - KG
                 #plt.annotate(label, (x_val, y_val))
-
         plt.title (title)
         plt.show()
 
@@ -179,6 +186,6 @@ if __name__ == '__main__':
     assert(tr == [[1, 4, 7], [2, 5, 8], [3, 6, 9]])
 
     # Run the visualizer
-    #v = Visualizer(norun = True, uname = 'U1426232771.97_sav.txt', vname = 'V1426232771.97_sav.txt')
-    v = Visualizer()
+    v = Visualizer(norun = True, uname = 'U1426274307.43_sav.txt', vname = 'V1426274307.43_sav.txt')
+    #v = Visualizer()
     v.run()
