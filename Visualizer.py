@@ -68,7 +68,7 @@ class Visualizer:
 
         out = []
         if ids == None:
-            return transpose(data)
+            return data
         for i in ids:
             out.append(map(lambda row: row[i], data))
         return transpose(out)
@@ -127,29 +127,33 @@ class Visualizer:
         print target_movie_names
 
         # Get info and coordinates for horror movies
-        #horror_movie_info = self.get_movie_type("Horror")
-        #horror_movie_names = horror_movie_info.keys()
-        #horror_movie_data = self.get_movie_data(horror_movie_info.values())
+        horror_movie_info = self.get_movie_type("Horror")
+        horror_movie_names = horror_movie_info.keys()
+        horror_movie_data = self.get_movie_data(horror_movie_info.values())
 
         # Get info and coordinates for all users and movies
-        #all_movies = self.get_movie_data()
-        #user_data = self.get_user_data()
+        all_movies = self.get_movie_data()
+        print all_movies
+        user_data = self.get_user_data()
 
         # Plot movies we care about with labels
         data_series = [(movie_data[0], movie_data[1], target_movie_names)]
         self.plot(data_series, "$V_x$", "$V_y$", "2-D Approximation of Movie Data")
 
+        print 'all movies: ' + str(len(all_movies))
+        print len(all_movies[0])
+
         # Plot all movies and users
-        #data_series = [(all_movies[0], all_movies[1], []), (user_data[0], user_data[1], [])]
-        #self.plot(data_series, "$V_x$", "$V_y$", "All User (red) and Movie (blue) Data")
+        data_series = [(all_movies[0], all_movies[1], []), (user_data[0], user_data[1], [])]
+        self.plot(data_series, "$V_x$", "$V_y$", "All User (red) and Movie (blue) Data")
 
         # Plot all horror movies
-        #data_series = [(horror_movie_data[0], horror_movie_data[1], horror_movie_names)]
-        #self.plot(data_series, "$V_x$", "$V_y$", "2-D Approximation of Horror Movie Data")
+        data_series = [(horror_movie_data[0], horror_movie_data[1], horror_movie_names)]
+        self.plot(data_series, "$V_x$", "$V_y$", "2-D Approximation of Horror Movie Data")
 
         # Plot all movies, and horror movies
-        #data_series = [(all_movies[0], all_movies[1], []), (horror_movie_data[0], horror_movie_data[1], [])]
-        #self.plot(data_series, "$V_x$", "$V_y$", "All Movies (blue) and Horror (Red) Data")
+        data_series = [(all_movies[0], all_movies[1], []), (horror_movie_data[0], horror_movie_data[1], [])]
+        self.plot(data_series, "$V_x$", "$V_y$", "All Movies (blue) and Horror (Red) Data")
 
     def plot(self, data_series, xlabel, ylabel, title):
         '''
@@ -189,6 +193,6 @@ if __name__ == '__main__':
     assert(tr == [[1, 4, 7], [2, 5, 8], [3, 6, 9]])
 
     # Run the visualizer
-    v = Visualizer(norun = True, uname = 'U1426274307.43_sav.txt', vname = 'V1426274307.43_sav.txt')
+    v = Visualizer(norun = True, uname = 'U1426277448.82_sav.txt', vname = 'V1426277448.82_sav.txt')
     #v = Visualizer()
     v.run()
