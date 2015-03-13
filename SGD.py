@@ -61,10 +61,18 @@ class SGD:
 
 
 
-    def run(self):
+    def run(self, learning_rate = 0.001, regularizer = 10):
         '''
         Run SGD until convergence.
         '''
+        # When we run the SGD, we want to 
+        # override these parameters to their correct
+        # values. We leave the other values in __init__
+        # so we can debug SGD if we don't call run(self)
+        self.k = 20
+        self.regularizer = regularizer
+        self.learning_rate = learning_rate
+        self.cutoff = .0001
 
         print 'Running SGD'
         epochs = 1
