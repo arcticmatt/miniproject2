@@ -14,7 +14,7 @@ class SGD:
 
     def __init__(self):
         # The number of latent factors. We will use 20 b/c Yisong Yue told us to.
-        self.k = 3
+        self.k = 20
         self.regularizer = 1.0
         self.learning_rate = .001
         self.cutoff = .0001
