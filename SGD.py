@@ -142,7 +142,6 @@ class SGD:
         Vt_grads[j] += (self.learning_rate * Vt_other_grad_j)
         V_grads = np.transpose(Vt_grads)
 
-
         # Calculate the gradients for the a vector
         a_i_val = self.a[i]
         a_grads = self.learning_rate * (self.regularizer / N) * self.a
@@ -159,6 +158,7 @@ class SGD:
         self.V = np.subtract(self.V, V_grads)
         self.a = np.subtract(self.a, a_grads)
         self.b = np.subtract(self.b, b_grads)
+        
 
     def get_error(self):
         '''
