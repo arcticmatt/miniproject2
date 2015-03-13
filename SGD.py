@@ -57,13 +57,7 @@ class SGD:
         #    self.training_points.append((i, j))
         #    self.Y.append(row)
 
-<<<<<<< HEAD
-
-
     def run(self, learning_rate = 0.001, regularizer = 10):
-=======
-    def run(self):
->>>>>>> 319ae4785bf609e5b3aee5b94d101e1ad912f800
         '''
         Run SGD until convergence.
         '''
