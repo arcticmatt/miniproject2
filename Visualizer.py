@@ -13,7 +13,6 @@ def transpose(matrix):
         out.append(map(lambda row: row[i], matrix))
     return out
 
-
 class Visualizer:
     '''
     Runs SVD to decompose the data matrix X into U Sigma V^T, project X
@@ -77,11 +76,14 @@ class Visualizer:
 
     def __init__(self):
         self.sgd = SGD()
-        self.sgd.run()
         self.U = transpose(self.sgd.U)
         self.V = self.sgd.V
 
     def run(self, num_components=2):
+
+        self.sgd.run()
+        self.U /= np.var(self.U)
+
         print "Original dimensions of U: %s x %s"%(len(self.U), len(self.U[0]))
         print "Original dimensions of V: %s x %s"%(len(self.V), len(self.V[0]))
 
@@ -90,6 +92,19 @@ class Visualizer:
 
         # Extract the first two columns of A
         A2 = np.matrix(transpose(map(lambda row: row[:2], A)))
+
+        # print "Column vector for free willy: %s"%(self.U)
+
+
+        '''
+        # Print free willy columns before transforming
+        testing_matrix = transpose(self.U)
+        free_willy_1 = testing_matrix[77]
+        free_willy_2 = testing_matrix[34]
+
+        print "Free willy 1: %s"%free_willy_1
+        print "Free willy 2: %s"%free_willy_2
+        '''
 
         # Project U and V to the first two columns of A
         try:
@@ -104,12 +119,21 @@ class Visualizer:
         print "New dimensions of U: %s x %s"%(len(self.U), len(self.U[0]))
         print "New dimensions of V: %s x %s"%(len(self.V), len(self.V[0]))
 
+        '''
+        # Print free willy columns after transforming
+        testing_matrix = transpose(self.U)
+        free_willy_1 = testing_matrix[77]
+        free_willy_2 = testing_matrix[34]
+
+        print "Free willy 1: %s"%free_willy_1
+        print "Free willy 2: %s"%free_willy_2
+        '''
 
         # Get ids of movies we want to plot
-        #to_plot = self.get_target_movies()
+        to_plot = self.get_target_movies()
 
         # Plot horror movies
-        to_plot = self.get_movie_type("Horror")
+        # to_plot = self.get_movie_type("Horror")
 
         # Get the coordinates of movies with the IDs we want to plot
         movie_data = self.get_movie_data(to_plot.values())

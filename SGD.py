@@ -15,8 +15,8 @@ class SGD:
     def __init__(self):
         # The number of latent factors. We will use 20 b/c Yisong Yue told us to.
         self.k = 20
-        self.regularizer = 1.0
-        self.learning_rate = .001
+        self.regularizer = 0.001
+        self.learning_rate = 0.05
         self.cutoff = .0001
 
         # A  m x n  matrix of movie ratings, where y_ij corresponds to user (i+1)'s
@@ -92,7 +92,7 @@ class SGD:
                     if error > self.old_error: 
                         print 'The error went up. Stopping!'
                         self.should_stop = True
-                        break
+                        # break
 
                     self.old_error = error
 
@@ -112,7 +112,7 @@ class SGD:
                 high_diffs.extend(filter(lambda x : x > self.cutoff, V_row))
 
             if not high_diffs:
-                print 'Differences are all less than .01, so we break!'
+                print 'Differences are all less than %s, so we break!'%self.cutoff
                 break
 
             error = self.get_error()
