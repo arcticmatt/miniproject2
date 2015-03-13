@@ -57,7 +57,7 @@ class SGD:
         #    self.training_points.append((i, j))
         #    self.Y.append(row)
 
-    def run(self, learning_rate = 0.001, regularizer = 10):
+    def run(self, learning_rate = 0.01, regularizer = 10):
         '''
         Run SGD until convergence.
         '''
@@ -123,7 +123,7 @@ class SGD:
 
             epochs += 1
             # Shrink learning rate
-            self.learning_rate /= float(epochs)
+            # self.learning_rate /= float(epochs)
 
         print 'Done running SGD'
 

@@ -44,38 +44,30 @@ a scatterplot of both movie and user data.
 
 \section*{Stochastic Gradient Descent (Basic Formulation)}
 
-In implementing Stochastic Gradient descent, we computed the gradeint
+In implementing Stochastic Gradient descent, we computed the gradient
 of the following expression w.r.t $u_{n}, v_{m} \forall n \in U, m \in V$
 for a given point $y_{ij}$.
 
 $$ l = \min_{U, V} \frac{\lambda}{2N} (||U||^{2}_{Fro} + ||V||^{2}_{Fro}) +
-(y_{ij} - u_{i}^{\intercal}v_{j})^{2} $$
+\frac{1}{2}(y_{ij} - u_{i}^{\intercal}v_{j})^{2} $$
 
-We compute the following partial derivatives of this loss function:
+We compute the partial derivatives in this formulation as follows:
+
+$$ \frac{\partial l}{\partial_{u_{k}}} = \frac{\lambda}{N} u_{k} - \mathds{1}^{k = i} v_{j}(y_{ij} - u_{i}^{\intercal}v_{j}) $$
 
 
+$$ \frac{\partial l}{\partial_{v_{k}}} = \frac{\lambda}{N} v_{k} - \mathds{1}^{k = j} u_{i}(y_{ij} - u_{i}^{\intercal}v_{j}) $$
 
 
 
 
 \section*{Stochastic Gradient Descent (Advanced Formulation)}
 
-Since we are implementing stochastic gradient descent, we want to
-compute the gradient of the following expression w.r.t $u_{n}, v_{m} \forall n \in U, m \in V$ for
-a given $y_{ij}$.
+With the advanced formulation, we have a slightly more complex loss function which,
+now include offset vectors $a$ and $b$, defined as below:
 
 $$ l =  \min_{U, V, a, b} \frac{\lambda}{2N} (||U||^{2}_{Fro} + ||V||^{2}_{Fro}
 + ||a||^{2}_{Fro} + ||b||^{2}_{Fro}) + \frac{1}{2} (y_{ij} - \mu - (u_{i}^{\intercal}v_{j} + a_{i} + b_{j}))^{2} $$
-
-We have the following process for stochastic gradient descent:
-
-\begin{enumerate}
-    \item Randomly pick a $y_{ij}$
-    \item Compute the gradient of the error function $l(i,j)$ with respect to every column
-        in $U$ and every column in $V$, and every entry in $a$ and $b$.
-    \item Subtract $\eta \nabla$ from $U$ $V$, $a$, and $b$
-    \item Repeat steps 1-3 until $\eta \nabla < \epsilon$.
-\end{enumerate}
 
 We can compute the following partial derivatives:
 
@@ -92,9 +84,43 @@ $$ \frac{\partial l}{\partial_{u_{k}}} = \frac{\lambda}{n} u_{k} - \mathds{1}^{k
 $$ \frac{\partial l}{\partial_{v_{k}}} = \frac{\lambda}{n} v_{k} + \mathds{1}^{k = j} u_{i}((y_{ij} - \mu) -
 (u_{i}^{\intercal}v_{j} + a_{i} + b_{j})) $$
 
-\section*{Choice of Parameters}
-As per the set, we want to over-specify the rank of $U$ and $V$, so we will pick $k = 20$. Based on some initial trials, we will pick $\eta = 0.001$.
+\section*{Stochastic Gradient Descent, Process \footnote{See SGD.py}}
 
+We have the following process for stochastic gradient descent:
+
+\begin{enumerate}
+    \item Randomly pick a $y_{ij}$
+    \item Compute the gradient of the error function $l(i,j)$ with respect to every
+        column in $U$ and every column in $V$, and every entry in $a$ and $b$
+        (for the advanced formulation, i.e. see above).
+    \item Subtract $\eta \nabla$ from $U$ $V$, $a$, and $b$
+    \item Repeat steps 1-3 until $\eta \nabla < \epsilon$.
+\end{enumerate}
+
+
+\section*{Choice of Parameters}
+As per the set, we want to over-specify the rank of $U$ and $V$, so we will
+pick the rank, $k = 20$. Based on some initial trials, we will pick $\eta = 0.001$.
+Note that with our tests, $\eta$ decay did not help, so we decided to leave that
+out of the code. We picked our stopping criteria s.t. each value in $U$ and $V$
+had to change by less than $\epsilon = .0001$.
+
+\section*{SVD \& Projection \footnote{See Visualizer.py}}
+In our implementation, we did not explicity calculate SVD (i.e. using PCA and
+gradient descent), though note that this was not required for full credit.
+Instead, we used:
+
+\begin{verbatim}
+        A, sigma, B = np.linalg.svd(self.V)
+\end{verbatim}
+
+\noindent However, once we found the $A$ matrix in the SVD decomposition of $V = A
+\Sigma B^{\intercal}$,we define $\bar{A} = A_{1:2}^{\intercal}$. We then have
+the projections of $U$ and $V$:
+
+$$ \bar{V} = \bar{A} V, \bar{U} = \bar{A} U $$
+
+\section*{Visualizations}
 
 
 \end{document}

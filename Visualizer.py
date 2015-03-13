@@ -106,10 +106,10 @@ class Visualizer:
 
 
         # Get ids of movies we want to plot
-        #to_plot = self.get_target_movies()
+        to_plot = self.get_target_movies()
 
         # Plot horror movies
-        to_plot = self.get_movie_type("Horror")
+        #to_plot = self.get_movie_type("Horror")
 
         # Get the coordinates of movies with the IDs we want to plot
         movie_data = self.get_movie_data(to_plot.values())
