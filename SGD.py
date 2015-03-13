@@ -16,8 +16,9 @@ class SGD:
     def __init__(self):
         # The number of latent factors. We will use 20 b/c Yisong Yue told us to.
         self.k = 20
+        self.lmbda = 0
         self.regularizer = 10
-        self.learning_rate = .02
+        self.learning_rate = .01
         self.cutoff = .0001
 
         # A  m x n  matrix of movie ratings, where y_ij corresponds to user (i+1)'s
@@ -62,6 +63,13 @@ class SGD:
         self.parser = Parser()
         self.Y, self.training_points = self.parser.parse_ratings_data('data/data.txt')
 
+
+    def update_nesterov_index(self):
+        self.lmbda = (1.0 + math.sqrt(1.0 + 4.0 * (self.lmbda ** 2))) / 2.0
+        self.gamma = (1.0 - self.lmbda) / (self.lmbda + 1.0)
+        print "Setting gamma to %s"%self.gamma
+
+
     def run(self):
         '''
         Run SGD until convergence.
@@ -72,6 +80,7 @@ class SGD:
         self.old_error = 1000000
         self.should_stop = False
         while epochs < 50:
+            self.update_nesterov_index()
             print '=============== Epoch', epochs, '==============='
 
             # Keep track of old matrices to see how much this epoch changes them
@@ -117,6 +126,8 @@ class SGD:
         i, j = point
         N = float(len(self.training_points))
 
+        learning_rate = self.learning_rate * (1 - self.gamma)
+
         # Calculuate the gradients for the U matrix. Do this by pulling out
         # the i'th row, calculating the gradient for the matrix sans that row (just
         # one multiplication), and then calculating the gradient for the i'th row
@@ -125,7 +136,7 @@ class SGD:
         U_i_row = self.U[i]
         U_i_reg = (self.regularizer / N) * self.U[i]
         U_i_error = -self.V[:,j] * ((self.Y[i][j] - self.Y_avg) - (np.dot(U_i_row, self.V[:,j]) + self.a[i] + self.b[j]))
-        U_grads_i = self.learning_rate * (U_i_reg + U_i_error)
+        U_grads_i = learning_rate * (U_i_reg + U_i_error)
         self.U[i] -= U_grads_i  
         
 
@@ -143,18 +154,18 @@ class SGD:
         Vt_j_row = Vt[j]
         Vt_j_error = -self.U[i,:] * ((self.Y[i][j] - self.Y_avg) - (np.dot(self.U[i,:], Vt_j_row) + self.a[i] + self.b[j]))
         Vt_j_regularization = (self.regularizer / N) * Vt_j_row 
-        V_j_grad = np.transpose( self.learning_rate * (Vt_j_error + Vt_j_regularization))
+        V_j_grad = np.transpose( learning_rate * (Vt_j_error + Vt_j_regularization))
         self.V[:, j] -= V_j_grad
 
 
         # Calculate the gradients for the a vector
         a_regularization = self.a[i] * self.regularizer
         a_error = -((self.Y[i][j] - self.Y_avg) - (np.dot(self.U[i,:], Vt_j_row) + self.a[i] + self.b[j]))
-        self.a[i] -= self.learning_rate * (a_error + a_regularization)
+        self.a[i] -= learning_rate * (a_error + a_regularization)
 
         b_regularization = self.b[j] * self.regularizer
         b_error = -((self.Y[i][j] - self.Y_avg) - (np.dot(self.U[i,:], Vt_j_row) + self.a[i] + self.b[j]))
-        self.b[j] -= self.learning_rate * (b_error + b_regularization)
+        self.b[j] -= learning_rate * (b_error + b_regularization)
         
 
     def get_error(self):
