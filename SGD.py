@@ -32,7 +32,7 @@ class SGD:
         Y_rows = len(self.Y)
         Y_cols = len(self.Y[0])
 
-        print self.Y
+        #print self.Y
 
         # A  m x k  matrix. Initialized with random values.
         self.U = [[random.random() for i in range(self.k)] for i in range(Y_rows)]
@@ -49,15 +49,15 @@ class SGD:
         '''
 
         parser = Parser()
-        # self.Y, self.training_points = parser.parse_ratings_data('data/data.txt')
-        self.Y = []
-        self.training_points = []
-        for i in range(10):
-            row = []
-            for j in range(10):
-                row.append(j % 2)
-            self.training_points.append((i, j))
-            self.Y.append(row)
+        self.Y, self.training_points = parser.parse_ratings_data('data/data.txt')
+        #self.Y = []
+        #self.training_points = []
+        #for i in range(10):
+        #    row = []
+        #    for j in range(10):
+        #        row.append(j % 2)
+        #    self.training_points.append((i, j))
+        #    self.Y.append(row)
 
 
 
@@ -68,6 +68,8 @@ class SGD:
 
         print 'Running SGD'
         epochs = 1
+        self.old_error = 1000000
+        self.should_stop = False
         while (True):
             time.sleep(0.1)
             print 'Epoch', epochs
@@ -80,13 +82,25 @@ class SGD:
             random.shuffle(self.training_points)
             count = 1
             for point in self.training_points:
+
                 if count % 5000 == 0:
                     print 'point #', count
                     error = self.get_error()
                     print 'Error =', error
+                    print 'Old Error = ', self.old_error
+
+                    if error > self.old_error: 
+                        print 'The error went up. Stopping!'
+                        self.should_stop = True
+                        break
+
+                    self.old_error = error
+
                 self.sgd_step(point)
                 count += 1
 
+            if self.should_stop:
+                break
             # Get differences between updated and old matrices, filter out
             # all differences that are greater than .01
             U_diff = np.subtract(self.U, U_old)
@@ -102,11 +116,12 @@ class SGD:
                 break
 
             error = self.get_error()
+
             print 'Error =', error
 
             epochs += 1
             # Shrink learning rate
-            #self.learning_rate /= float(epochs)
+            self.learning_rate /= float(epochs)
 
         print 'Done running SGD'
 

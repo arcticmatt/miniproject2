@@ -72,11 +72,11 @@ class Visualizer:
 
     def __init__(self):
         self.sgd = SGD()
+        self.sgd.run()
         self.U = transpose(self.sgd.U)
         self.V = self.sgd.V
 
     def run(self, num_components=2):
-
         print "Original dimensions of U: %s x %s"%(len(self.U), len(self.U[0]))
         print "Original dimensions of V: %s x %s"%(len(self.V), len(self.V[0]))
 
