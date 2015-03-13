@@ -1,5 +1,7 @@
 import csv
 import os
+import numpy as np
+import ast
 
 class Parser:
     '''
@@ -9,7 +11,6 @@ class Parser:
         pass
 
     def parse_movie_data(self, filename):
-        # TODO
 
         print 'Parsing movie data'
         x = []
@@ -33,6 +34,43 @@ class Parser:
             for word in line.split('\t'):
                 movie.append(word)
             self.movies_arr.append(movie)
+
+    '''
+    We will use this method to write U and V to a CSV.
+    '''
+    def write_to_csv (self, matrix, filename):
+        path = 'savedresults/' + filename
+        print 'Saving ' + filename
+        if os.path.exists(path):
+            os.remove(path)
+        with open(path, 'w+') as sub_file:
+            file_writer = csv.writer(sub_file)
+            for i in range(0, len(matrix)):
+                file_writer.writerow(matrix[i])
+
+    '''
+    We will use this method to read U and V to a CSV.
+    '''
+    def read_from_csv(self, filename, matrix_name = 'U'):
+        if matrix_name != 'U' and matrix_name != 'V':
+            raise ValueError ("We can only fetch U or V.")
+
+        path = 'savedresults/' + filename
+        print 'Reading saved matrix ' + matrix_name
+
+        matrix = []
+
+        if os.path.exists(path):
+            with open(path, 'rb') as csvfile:
+                file_reader = csv.reader(csvfile)
+                for row in file_reader:
+                    row = map(float, row)
+                    matrix.append(row)
+
+        return np.array(matrix)
+
+
+
 
     def get_dictionary_of_movie_types(self, type, limit = 100):
         movies = {}

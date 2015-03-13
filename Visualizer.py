@@ -74,12 +74,19 @@ class Visualizer:
     def get_movie_data(self, ids):
         return self.get_plot_data(self.V, ids)
 
+    def visualize_without_running(self, U_fname, V_fname):
+        self.parser = Parser()
+        self.U = transpose(self.parser.read_from_csv(U_fname, 'U'))
+        self.V = self.parser.read_from_csv(V_fname, 'V')
 
-    def __init__(self):
-        self.sgd = SGD()
-        self.sgd.run()
-        self.U = transpose(self.sgd.U)
-        self.V = self.sgd.V
+    def __init__(self, norun = False, uname = 'U.txt', vname = 'V.txt'):
+        if norun:
+            self.visualize_without_running(uname, vname)
+        else:
+            self.sgd = SGD()
+            self.sgd.run()
+            self.U = transpose(self.sgd.U)
+            self.V = self.sgd.V
 
     def run(self, num_components=2):
         print "Original dimensions of U: %s x %s"%(len(self.U), len(self.U[0]))
@@ -157,6 +164,7 @@ if __name__ == '__main__':
     assert(tr == [[1, 4, 7], [2, 5, 8], [3, 6, 9]])
 
     # Run the visualizer
+    #v = Visualizer(norun = True, uname = 'U1426232771.97_sav.txt', vname = 'V1426232771.97_sav.txt')
     v = Visualizer()
     v.run()
 
