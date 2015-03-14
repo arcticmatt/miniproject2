@@ -15,11 +15,23 @@ def transpose(matrix):
 
 
 class Visualizer:
-    '''
-    Runs SVD to decompose the data matrix X into U Sigma V^T, project X
-    onto the first k columns of U, and visualize the resulting data set
+    def __init__(self, norun = False, uname = 'U.txt', vname = 'V.txt'):
+        '''
+        Runs SVD to decompose the data matrix X into U Sigma V^T, project X
+        onto the first k columns of U, and visualize the resulting data set
+        '''
 
-    '''
+        if norun:
+            self.visualize_without_running(uname, vname)
+        else:
+            self.sgd = SGD()
+            try:
+                self.sgd.run()
+            except KeyboardInterrupt:
+                pass
+
+            self.U = transpose(self.sgd.U)
+            self.V = self.sgd.V
 
     def get_movie_type(self, type):
         self.parser = Parser()
@@ -91,19 +103,6 @@ class Visualizer:
         self.U = transpose(self.parser.read_from_csv(U_fname, 'U'))
         self.V = self.parser.read_from_csv(V_fname, 'V')
 
-    def __init__(self, norun = False, uname = 'U.txt', vname = 'V.txt'):
-        if norun:
-            self.visualize_without_running(uname, vname)
-        else:
-            self.sgd = SGD()
-            try:
-                self.sgd.run()
-            except KeyboardInterrupt:
-                pass
-
-            self.U = transpose(self.sgd.U)
-            self.V = self.sgd.V
-
     def run(self, num_components=2):
         print "Original dimensions of U: %s x %s"%(len(self.U), len(self.U[0]))
         print "Original dimensions of V: %s x %s"%(len(self.V), len(self.V[0]))
@@ -118,10 +117,8 @@ class Visualizer:
         self.U = (A2 * self.U).tolist()
         self.V = (A2 * self.V).tolist()
 
-
         print "New dimensions of U: %s x %s"%(len(self.U), len(self.U[0]))
         print "New dimensions of V: %s x %s"%(len(self.V), len(self.V[0]))
-
 
         # Get info and coordinates for 'target' movies (those used by
         # Prof. Yue in his example)
@@ -171,7 +168,7 @@ class Visualizer:
 
         for x, y, labels in data_series:
             plt.scatter(x, y, color=colors.pop())
-            plt.scatter([np.mean(x)], [np.mean(y)], color = colors.pop())
+            #plt.scatter([np.mean(x)], [np.mean(y)], color = colors.pop())
             print np.mean(x)
             print np.mean(y)
             plt.ylabel(ylabel)
@@ -192,7 +189,6 @@ class Visualizer:
                 #plt.annotate(label, (x_val, y_val))
         plt.title (title)
         plt.show()
-
 
 if __name__ == '__main__':
 

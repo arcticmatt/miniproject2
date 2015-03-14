@@ -4,10 +4,10 @@ import numpy as np
 import ast
 
 class Parser:
-    '''
-    Parses a tab/space seperated data file
-    '''
     def __init__(self):
+        '''
+        Parses a tab/space seperated data file
+        '''
         pass
 
     def parse_movie_data(self, filename):
@@ -21,9 +21,9 @@ class Parser:
 
         # We need this list of genres in case the caller
         # asks for a specific genre, see get_dictionary_of_movie_types
-        self.genres = ["movieId", "movieTitle", "Unkown", 
+        self.genres = ["movieId", "movieTitle", "Unkown",
         "Action", "Adventure", "Animation", "Children's", "Comedy",
-        "Crime", "Documentary", "Drama", "Fantasy", "Film-Noir", "Horror", 
+        "Crime", "Documentary", "Drama", "Fantasy", "Film-Noir", "Horror",
         "Musical", "Mystery", "Romance", "Sci-Fi", "Thriller", "War", "Western"]
 
 
@@ -35,10 +35,11 @@ class Parser:
                 movie.append(word)
             self.movies_arr.append(movie)
 
-    '''
-    We will use this method to write U and V to a CSV.
-    '''
     def write_to_csv (self, matrix, filename):
+        '''
+        We will use this method to write U and V to a CSV.
+        '''
+
         path = 'savedresults/' + filename
         print 'Saving ' + filename
         if os.path.exists(path):
@@ -48,10 +49,11 @@ class Parser:
             for i in range(0, len(matrix)):
                 file_writer.writerow(matrix[i])
 
-    '''
-    We will use this method to read U and V to a CSV.
-    '''
     def read_from_csv(self, filename, matrix_name = 'U'):
+        '''
+        We will use this method to read U and V to a CSV.
+        '''
+
         if matrix_name != 'U' and matrix_name != 'V':
             raise ValueError ("We can only fetch U or V.")
 
@@ -68,9 +70,6 @@ class Parser:
                     matrix.append(row)
 
         return np.array(matrix)
-
-
-
 
     def get_dictionary_of_movie_types(self, type, limit = 100):
         movies = {}
@@ -93,8 +92,6 @@ class Parser:
         print movies
         return movies
 
-
-    
     def get_horror_movies(self):
         horror_films = {}
         for movie in self.movies_arr:
@@ -102,8 +99,6 @@ class Parser:
                 horror_films[movie[1]] = int(movie[0])
 
         return horror_films
-
-
 
     def parse_ratings_data(self, filename):
         '''Parses the ratings data, which consists of:
@@ -143,7 +138,6 @@ class Parser:
             Y[user_id][movie_id] = rating
 
         return Y, training_points
-
 
 if __name__ == '__main__':
     parser = Parser()
