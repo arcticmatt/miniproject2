@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.5.25)  10 MAR 2015 22:22
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.5.25)  13 MAR 2015 17:46
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -288,25 +288,49 @@ LaTeX Font Info:    Try loading font information for U+msb on input line 35.
 (/usr/local/texlive/2014/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-LaTeX Font Info:    Try loading font information for U+dsrom on input line 52.
+Overfull \hbox (7.80305pt too wide) in paragraph at lines 47--50
+\OT1/cmr/m/n/10 In im-ple-ment-ing Stochas-tic Gra-di-ent de-scent, we com-puted the gra-di-ent of the fol-low-ing ex-pres-sion w.r.t $\OML/cmm/m/it/10 u[]; v[]\OMS/cmsy/m/n/10 8\OML/cmm/m/it/10 n \OMS/cmsy/m/n/10 2
+ []
+
+LaTeX Font Info:    Try loading font information for U+dsrom on input line 56.
 (/usr/local/texlive/2014/texmf-dist/tex/latex/doublestroke/Udsrom.fd
 File: Udsrom.fd 1995/08/01 v0.1 Double stroke roman font definitions
 ) [1{/usr/local/texlive/2014/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
 
-] (./report.aux) ) 
+] <final_graph_1.png, id=17, 1156.32pt x 645.3711pt>
+File: final_graph_1.png Graphic file (type png)
+<use final_graph_1.png>
+Package pdftex.def Info: final_graph_1.png used on input line 129.
+(pdftex.def)             Requested size: 489.10289pt x 272.97429pt.
+[2 <./final_graph_1.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 147--153
+
+ []
+
+<all_users_movies.png, id=24, 1156.32pt x 645.3711pt>
+File: all_users_movies.png Graphic file (type png)
+<use all_users_movies.png>
+Package pdftex.def Info: all_users_movies.png used on input line 159.
+(pdftex.def)             Requested size: 489.10289pt x 272.97429pt.
+<musical_all_movies.png, id=25, 1156.32pt x 645.3711pt>
+File: musical_all_movies.png Graphic file (type png)
+<use musical_all_movies.png>
+Package pdftex.def Info: musical_all_movies.png used on input line 166.
+(pdftex.def)             Requested size: 489.10289pt x 272.97429pt.
+[3 <./all_users_movies.png>] [4 <./musical_all_movies.png>] (./report.aux) ) 
 Here is how much of TeX's memory you used:
- 4285 strings out of 493117
- 59402 string characters out of 6135433
- 131184 words of memory out of 5000000
- 7685 multiletter control sequences out of 15000+600000
- 6232 words of font info for 27 fonts, out of 8000000 for 9000
+ 4335 strings out of 493117
+ 60139 string characters out of 6135433
+ 136184 words of memory out of 5000000
+ 7720 multiletter control sequences out of 15000+600000
+ 11381 words of font info for 49 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 38i,10n,43p,239b,219s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/doublestroke/dsrom10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/symbols/msam7.pfb>
-Output written on report.pdf (1 page, 85786 bytes).
+ 38i,11n,43p,239b,219s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/doublestroke/dsrom10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/symbols/msam7.pfb>
+Output written on report.pdf (4 pages, 478247 bytes).
 PDF statistics:
- 44 PDF objects out of 1000 (max. 8388607)
- 31 compressed objects within 1 object stream
+ 76 PDF objects out of 1000 (max. 8388607)
+ 50 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 16 words of extra memory for PDF output out of 10000 (max. 10000000)
 

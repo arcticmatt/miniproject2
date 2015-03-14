@@ -132,10 +132,10 @@ class Visualizer:
         print movie_data
         print target_movie_names
 
-        # Get info and coordinates for horror movies
-        horror_movie_info = self.get_movie_type("Musical")
-        horror_movie_names = horror_movie_info.keys()
-        horror_movie_data = self.get_movie_data(horror_movie_info.values())
+        # Get info and coordinates for musical movies
+        musical_movie_info = self.get_movie_type("Musical")
+        musical_movie_names = musical_movie_info.keys()
+        musical_movie_data = self.get_movie_data(musical_movie_info.values())
 
         # Get info and coordinates for all users and movies
         all_movies = self.get_movie_data()
@@ -153,13 +153,13 @@ class Visualizer:
         data_series = [(all_movies[0], all_movies[1], []), (user_data[0], user_data[1], [])]
         self.plot(data_series, "$V_x$", "$V_y$", "All User (red) and Movie (blue) Data")
 
-        # Plot all horror Movies
-        data_series = [(horror_movie_data[0], horror_movie_data[1], horror_movie_names)]
-        self.plot(data_series, "$V_x$", "$V_y$", "2-D Approximation of Horror Movie Data")
+        # Plot all musical Movies
+        data_series = [(musical_movie_data[0], musical_movie_data[1], musical_movie_names)]
+        self.plot(data_series, "$V_x$", "$V_y$", "2-D Approximation of musical Movie Data")
 
-        # Plot all movies, and horror movies
-        data_series = [(all_movies[0], all_movies[1], []), (horror_movie_data[0], horror_movie_data[1], [])]
-        self.plot(data_series, "$V_x$", "$V_y$", "All Movies (blue) and Horror (Red) Data")
+        # Plot all movies, and musical movies
+        data_series = [(all_movies[0], all_movies[1], []), (musical_movie_data[0], musical_movie_data[1], [])]
+        self.plot(data_series, "$V_x$", "$V_y$", "All Movies (blue) and musical (Red) Data")
 
     def plot(self, data_series, xlabel, ylabel, title):
         '''
@@ -171,6 +171,9 @@ class Visualizer:
 
         for x, y, labels in data_series:
             plt.scatter(x, y, color=colors.pop())
+            plt.scatter([np.mean(x)], [np.mean(y)], color = colors.pop())
+            print np.mean(x)
+            print np.mean(y)
             plt.ylabel(ylabel)
             plt.xlabel(xlabel)
 
