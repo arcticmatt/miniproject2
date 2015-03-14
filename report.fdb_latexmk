@@ -1,5 +1,5 @@
 # Fdb version 3
-["pdflatex"] 1426293960 "report.tex" "report.pdf" "report" 1426293962
+["pdflatex"] 1426297186 "report.tex" "report.pdf" "report" 1426297187
   "/usr/local/texlive/2014/texmf-dist/fonts/map/fontname/texfonts.map" 1272929888 3287 e6b82fe08f5336d4d5ebc73fb1152e87 ""
   "/usr/local/texlive/2014/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
   "/usr/local/texlive/2014/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1246382020 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
@@ -84,12 +84,12 @@
   "/usr/local/texlive/2014/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1401025944 1445653 26a0aacf3d70032b1ec192e8c7792117 ""
   "/usr/local/texlive/2014/texmf-var/web2c/pdftex/pdflatex.fmt" 1401025990 3832012 904d82bdcc8abf2b1cd296990b82553b ""
   "/usr/local/texlive/2014/texmf.cnf" 1401025936 577 a59edbde8d3a8c549d0eeaab1739e2ff ""
-  "all_users_movies.png" 1426289778 176653 9e7bb14e2b96365e1e2d6a92869059cf ""
-  "final_graph_1.png" 1426289233 102545 86fd68fb7ccd73cdba6af0465b71dfa1 ""
-  "musical_all_movies.png" 1426289975 154342 5a66170148ec1674b46a7df7c0cfff51 ""
-  "report.aux" 1426293962 8 a94a2480d3289e625eea47cd1b285758 ""
-  "report.tex" 1426293959 7879 d2cece9c70d0c1db9163bcf342a9b33d ""
+  "all_users_movies.png" 1426297023 176653 9e7bb14e2b96365e1e2d6a92869059cf ""
+  "final_graph_1.png" 1426297023 102545 86fd68fb7ccd73cdba6af0465b71dfa1 ""
+  "musical_all_movies.png" 1426297023 154342 5a66170148ec1674b46a7df7c0cfff51 ""
+  "report.aux" 1426297187 8 a94a2480d3289e625eea47cd1b285758 ""
+  "report.tex" 1426297185 7903 f2da26409e900809a74e3b09f0cafd22 ""
   (generated)
   "report.aux"
-  "report.log"
   "report.pdf"
+  "report.log"

@@ -29,13 +29,14 @@ bottom=1in,footskip=0in]{geometry}
 \rhead{Kshitij Grover, Matt Lim, Siddharth Murching}
 \begin{document}
 
+\section*{Using 1 late day}
 \section*{Introduction}
 
 For this miniproject, we wanted to visualize movies and users, in clusters,
 based on an existing matrix $Y$, where we had $m$ rows corresponding to $m$
 user\_id values, and $n$ columns for each of $n$ movies. We first learned
-a Latent Factor Model in $U^{\intercal}$ and $V$, which each had dimension
-$M$ x $K$ and $K$ x $N$ respectively. We accomplished this by ysing Stochastic
+a Latent Factor Model in $U^{\intercal}$ and $V$, which had dimensions
+$M$ x $K$ and $K$ x $N$ respectively. We accomplished this by using Stochastic
 Gradient Descent after initializing $U$ and $V$ to random values between 0 and 1.
 See below for the gradient functions we optimized. Furthermore, after learning
 $U$ and $V$, we visualized these by projecting them to 2 Dimensions and making
