@@ -16,6 +16,8 @@ class SGD:
     def __init__(self):
         # The number of latent factors. We will use 20 b/c Yisong Yue told us to.
         self.k = 20
+
+        # The initial value of lambda for our implementation of Nesterov gradient descent.
         self.lmbda = 0
         self.regularizer = 10
         self.learning_rate = .01
@@ -38,7 +40,9 @@ class SGD:
         Y_rows = len(self.Y)
         Y_cols = len(self.Y[0])
 
-        # A  m x k  matrix. Initialized with random values.
+        # A  m x k  matrix. Initialized with random values. Note that this matrix
+        # is actually U^T in the equation Y = U^TV, i.e. our implementation attempts
+        # to factor self.Y into self.U * self.V
         self.U = [[random.random() for i in range(self.k)] for i in range(Y_rows)]
         self.U = np.array(self.U) # make numpy array to make matrix operations easier
 
@@ -65,6 +69,10 @@ class SGD:
 
 
     def update_nesterov_index(self):
+        '''
+        Apply one iteration of the nesterov gradient descent update rule to our
+        parameters lambda and gamma
+        '''
         self.lmbda = (1.0 + math.sqrt(1.0 + 4.0 * (self.lmbda ** 2))) / 2.0
         self.gamma = (1.0 - self.lmbda) / (self.lmbda + 1.0)
         print "Setting gamma to %s"%self.gamma
@@ -77,7 +85,7 @@ class SGD:
 
         print 'Running SGD'
         epochs = 1
-        self.old_error = 1000000
+        old_error = 10e9
         self.should_stop = False
         # Run a certain number of epochs; tweak based on trial and error
         while epochs < 50:
@@ -95,16 +103,19 @@ class SGD:
                 self.sgd_step(point)
                 count += 1
 
-            # Stop if error went up
-            if self.should_stop:
-                break
-
             error = self.get_error()
             print 'Error =', error
 
+            # Stop if error went up. Uncomment to allow for early stopping
+            
+            # if error > old_error:
+            #     break
+            # old_error = error            
+
             epochs += 1
-            # Shrink learning rate
-            #self.learning_rate /= float(epochs)
+            
+            # Uncomment to shrink learning rate by epoch
+            # self.learning_rate /= float(epochs)
 
         print 'Done running SGD'
 
@@ -131,6 +142,19 @@ class SGD:
 
         i, j = point
         N = float(len(self.training_points))
+
+        # Nesterov gradient descent calls for setting
+        # U = (1 - gamma) * (U - d) + gamma * U, where U is
+        # a variable and d = nu * del(U) is the gradient of U
+        # multiplied by a learning rate nu.
+        # 
+        # This can be reduced to:
+        # U = U(1 - gamma + gamma) + d(gamma - 1)
+        # U = U - d(1 - gamma).
+        #
+        # We can therefore perform nesterov GD using
+        # the same update as rule as normal gradient descent with an
+        # added scale factor of 1 - gamma for the learning rate.
         learning_rate = self.learning_rate * (1 - self.gamma)
 
         # Calculate the gradients for the U matrix. Do this by calculating the gradient
@@ -146,16 +170,9 @@ class SGD:
 
         # Transpose V to make it easier to work with (so we can work with rows
         # instead of columns).
-        # Calculuate the gradients for the V matrix. Do this by pulling out
-        # the j'th row, calculating the gradient for the matrix sans that row (just
-        # one multiplication), and then calculating the gradient for the j'th row
-        # separately and putting the results together. Then tranpose the results
-        # to make the dimensions consistent with V.
-
-        # Note that we transpose V to make it easier to work with (so we can work with rows
-        # instead of columns).
-        # Calculate the gradients for the V matrix. Do this by calculating the gradient
-        # for every element in row j of V transpose. We can speed this up by using vector operations.
+        # Calculuate the gradient for V_j. Do this by pulling out
+        # the j'th row of V^T, calculating the gradient for just that row, and  
+        # transposing the result to make the dimensions consistent with V.
         Vt = np.transpose(self.V)
         Vt_j_row = Vt[j]
         Vt_j_error = -self.U[i,:] * ((self.Y[i][j] - self.Y_avg) - (np.dot(self.U[i,:], Vt_j_row) + self.a[i] + self.b[j]))
@@ -164,13 +181,13 @@ class SGD:
         # Shift the j'th column in our V matrix by the gradient vector we just calcullated
         self.V[:, j] -= V_j_grad
 
-        # Calculate the gradient for the a vector
+        # Calculate the gradient for the ith element of the a vector
         a_regularization = self.a[i] * self.regularizer
         a_error = -((self.Y[i][j] - self.Y_avg) - (np.dot(self.U[i,:], Vt_j_row) + self.a[i] + self.b[j]))
         # Shift the i'th value in the a vector by the gradient we just calculated
         self.a[i] -= learning_rate * (a_error + a_regularization)
 
-        # Calculate the gradient for the b vector
+        # Calculate the gradient for the jth element of the b vector
         b_regularization = self.b[j] * self.regularizer
         b_error = -((self.Y[i][j] - self.Y_avg) - (np.dot(self.U[i,:], Vt_j_row) + self.a[i] + self.b[j]))
         # Shift the j'th value in the b vector by the gradient we just calculated
