@@ -87,7 +87,7 @@ class Parser:
 
         for movie in self.movies_arr:
             if movie[index_to_look_for] == '1' and len(movies) < limit:
-                movies[movie[1]] = int(movie[0]) - 1
+                movies[movie[1]] = int(movie[0])
 
         print movies
         return movies

@@ -88,7 +88,7 @@ $$ \frac{\partial l}{\partial_{v_{k}}} = \frac{\lambda}{n} v_{k} + \mathds{1}^{k
 \section*{Stochastic Gradient Descent, Process \footnote{See SGD.py}}
 
 We ran SGD using Nesterov's accelerated gradient descent.
-Nesterov gradient descent calls for setting 
+Nesterov gradient descent calls for setting
 $U = (1 - \gamma) * (U - d) + \gamma * U$, where U is
 a variable and $d = \nu * \nabla(U)$ is the gradient of U
 multiplied by a learning rate $nu$.
@@ -104,17 +104,17 @@ the same update as rule as normal gradient descent with an
 added scale factor of $1 - \gamma$ being multiplied to the
 learning rate $\nu$
 
-A single epoch of SGD consists of updating our Nesterov 
+A single epoch of SGD consists of updating our Nesterov
 parameters $\lambda$ and $\gamma$ (to clarify, this happens once per epoch)
 and performing the following process for each of our training points:
 
 \begin{enumerate}
     \item Randomly pick an unselected $y_{ij}$
-    \item Calculate the gradient $\nabla$. 
+    \item Calculate the gradient $\nabla$.
 
     We implemented two versions of this step. In the version used to
-    generate the plots below (the version used in our submitted code), 
-    we only shift $U_i$, $V_j$, $a_i$, and $b_j$, so we only compute the 
+    generate the plots below (the version used in our submitted code),
+    we only shift $U_i$, $V_j$, $a_i$, and $b_j$, so we only compute the
     gradient for those parameters. This version ran much more quickly and converged
     to an error around $35000$.
 

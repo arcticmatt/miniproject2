@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.5.25)  13 MAR 2015 18:59
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.5.25)  13 MAR 2015 19:34
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -300,24 +300,24 @@ File: Udsrom.fd 1995/08/01 v0.1 Double stroke roman font definitions
 ] <final_graph_1.png, id=17, 1156.32pt x 645.3711pt>
 File: final_graph_1.png Graphic file (type png)
 <use final_graph_1.png>
-Package pdftex.def Info: final_graph_1.png used on input line 130.
+Package pdftex.def Info: final_graph_1.png used on input line 159.
 (pdftex.def)             Requested size: 489.10289pt x 272.97429pt.
-[2 <./final_graph_1.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 148--154
+[2]
+Underfull \hbox (badness 10000) in paragraph at lines 177--183
 
  []
 
-<all_users_movies.png, id=24, 1156.32pt x 645.3711pt>
+<all_users_movies.png, id=23, 1156.32pt x 645.3711pt>
 File: all_users_movies.png Graphic file (type png)
 <use all_users_movies.png>
-Package pdftex.def Info: all_users_movies.png used on input line 160.
+Package pdftex.def Info: all_users_movies.png used on input line 189.
 (pdftex.def)             Requested size: 489.10289pt x 272.97429pt.
-<musical_all_movies.png, id=25, 1156.32pt x 645.3711pt>
+<musical_all_movies.png, id=24, 1156.32pt x 645.3711pt>
 File: musical_all_movies.png Graphic file (type png)
 <use musical_all_movies.png>
-Package pdftex.def Info: musical_all_movies.png used on input line 167.
+Package pdftex.def Info: musical_all_movies.png used on input line 196.
 (pdftex.def)             Requested size: 489.10289pt x 272.97429pt.
-[3 <./all_users_movies.png>] [4 <./musical_all_movies.png>] (./report.aux) ) 
+[3 <./final_graph_1.png>] [4 <./all_users_movies.png> <./musical_all_movies.png>] (./report.aux) ) 
 Here is how much of TeX's memory you used:
  4335 strings out of 493117
  60139 string characters out of 6135433
@@ -325,9 +325,9 @@ Here is how much of TeX's memory you used:
  7720 multiletter control sequences out of 15000+600000
  11381 words of font info for 49 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 38i,11n,43p,239b,219s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 38i,10n,43p,239b,259s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/doublestroke/dsrom10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/symbols/msam7.pfb>
-Output written on report.pdf (4 pages, 479423 bytes).
+Output written on report.pdf (4 pages, 481511 bytes).
 PDF statistics:
  76 PDF objects out of 1000 (max. 8388607)
  50 compressed objects within 1 object stream
