@@ -79,6 +79,7 @@ class SGD:
         epochs = 1
         self.old_error = 1000000
         self.should_stop = False
+        # Run a certain number of epochs; tweak based on trial and error
         while epochs < 50:
             self.update_nesterov_index()
             print '=============== Epoch', epochs, '==============='
@@ -120,27 +121,28 @@ class SGD:
     def sgd_step(self, point):
         '''
         Perform one step of stochastic gradient descent, given a tuple of
-        the form (user_id, movie_id) which determines our y_ij in the gradient
+        the form (user_id, movie_id) which determines our y_ij in the gradient.
+        Each step shifts
+            - one row of the U matrix
+            - one column of the V matrix
+            - one value of the a vector
+            - one value of the b vector
         '''
 
         i, j = point
         N = float(len(self.training_points))
-
         learning_rate = self.learning_rate * (1 - self.gamma)
 
-        # Calculuate the gradients for the U matrix. Do this by pulling out
-        # the i'th row, calculating the gradient for the matrix sans that row (just
-        # one multiplication), and then calculating the gradient for the i'th row
-        # separately and putting the results together.
-
+        # Calculate the gradients for the U matrix. Do this by calculating the gradient
+        # for every element in row i of U (remember that U is really U transpose, so this
+        # corresponds to updating column i of the actual U matrix). We can speed this up
+        # by using vector operations.
         U_i_row = self.U[i]
         U_i_reg = (self.regularizer / N) * self.U[i]
         U_i_error = -self.V[:,j] * ((self.Y[i][j] - self.Y_avg) - (np.dot(U_i_row, self.V[:,j]) + self.a[i] + self.b[j]))
         U_grads_i = learning_rate * (U_i_reg + U_i_error)
-        self.U[i] -= U_grads_i  
-        
-
-        # pdb.set_trace()
+        # Shift the i'th row in our U matrix by the gradient vector we just calculated
+        self.U[i] -= U_grads_i
 
         # Transpose V to make it easier to work with (so we can work with rows
         # instead of columns).
@@ -150,23 +152,29 @@ class SGD:
         # separately and putting the results together. Then tranpose the results
         # to make the dimensions consistent with V.
 
+        # Note that we transpose V to make it easier to work with (so we can work with rows
+        # instead of columns).
+        # Calculate the gradients for the V matrix. Do this by calculating the gradient
+        # for every element in row j of V transpose. We can speed this up by using vector operations.
         Vt = np.transpose(self.V)
         Vt_j_row = Vt[j]
         Vt_j_error = -self.U[i,:] * ((self.Y[i][j] - self.Y_avg) - (np.dot(self.U[i,:], Vt_j_row) + self.a[i] + self.b[j]))
-        Vt_j_regularization = (self.regularizer / N) * Vt_j_row 
+        Vt_j_regularization = (self.regularizer / N) * Vt_j_row
         V_j_grad = np.transpose( learning_rate * (Vt_j_error + Vt_j_regularization))
+        # Shift the j'th column in our V matrix by the gradient vector we just calcullated
         self.V[:, j] -= V_j_grad
 
-
-        # Calculate the gradients for the a vector
+        # Calculate the gradient for the a vector
         a_regularization = self.a[i] * self.regularizer
         a_error = -((self.Y[i][j] - self.Y_avg) - (np.dot(self.U[i,:], Vt_j_row) + self.a[i] + self.b[j]))
+        # Shift the i'th value in the a vector by the gradient we just calculated
         self.a[i] -= learning_rate * (a_error + a_regularization)
 
+        # Calculate the gradient for the b vector
         b_regularization = self.b[j] * self.regularizer
         b_error = -((self.Y[i][j] - self.Y_avg) - (np.dot(self.U[i,:], Vt_j_row) + self.a[i] + self.b[j]))
+        # Shift the j'th value in the b vector by the gradient we just calculated
         self.b[j] -= learning_rate * (b_error + b_regularization)
-        
 
     def get_error(self):
         '''
